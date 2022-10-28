@@ -1,0 +1,41 @@
+version: "3"
+services:
+    mongodb:
+        image: mongo
+        expose:
+            - "27017"
+        ports:
+            - "27017:27017"
+        deploy:
+            resources:
+                limits:
+                    memory: 512MB
+                reservations:
+                    memory: 512MB   
+        networks:
+            - default
+
+        container_name: mongodb
+        restart: always
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: 12345
+    rabbitmq:
+        image: rabbitmq:management
+        expose:
+         - "5672"
+        ports:
+         - "15672:15672"
+         - "5672:5672"
+        deploy:
+            resources:
+                limits:
+                    memory: 256MB
+                reservations:
+                    memory: 256MB
+        networks:
+          - default
+        volumes:
+          - ./rabbitmq:/var/lib/rabbitmq/
+        container_name: rabbitmq
+        restart: always

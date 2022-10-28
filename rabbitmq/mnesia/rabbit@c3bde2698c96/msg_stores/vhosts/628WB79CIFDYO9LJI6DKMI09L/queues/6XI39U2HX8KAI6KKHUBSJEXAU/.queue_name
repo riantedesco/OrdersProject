@@ -1,0 +1,2 @@
+VHOST: /
+QUEUE: order_queue_publisher
