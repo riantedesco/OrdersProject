@@ -48,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDto save(OrderFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		OrderEntity order = mapper.map(body, OrderEntity.class);
+		order.setId(null);
 
 		if (body.getIdClient() != null) {
 			Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
