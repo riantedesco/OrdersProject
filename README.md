@@ -23,4 +23,5 @@
   > Swagger do msorder: http://localhost:7071/swagger-ui.html
   > Swagger do msorder: http://localhost:7072/swagger-ui.html
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/a432993702114ec3b2fc254a8240321b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+> Link do vídeo de apresentação:
+https://www.loom.com/share/a432993702114ec3b2fc254a8240321b
