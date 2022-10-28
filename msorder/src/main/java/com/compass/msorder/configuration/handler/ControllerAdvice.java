@@ -1,4 +1,4 @@
-package com.compass.msorder.exception.handler;
+package com.compass.msorder.configuration.handler;
 
 import com.compass.msorder.exception.InactiveProductException;
 import com.compass.msorder.exception.InvalidAttributeException;

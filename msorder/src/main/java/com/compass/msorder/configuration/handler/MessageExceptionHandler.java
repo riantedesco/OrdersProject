@@ -1,4 +1,4 @@
-package com.compass.msorder.exception.handler;
+package com.compass.msorder.configuration.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

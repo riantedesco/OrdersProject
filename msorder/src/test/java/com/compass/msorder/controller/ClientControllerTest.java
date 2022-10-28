@@ -48,7 +48,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void createClientTest() {
+    public void saveClient_WhenSendMethodPost_ExpectedStatusOk() {
         ClientFormDto clientFormDto = ClientFormDtoFixture.getDefault();
 
         HttpEntity<ClientFormDto> httpEntity = new HttpEntity<>(clientFormDto);
@@ -61,7 +61,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void listClientTest() {
+    public void listClients_WhenSendMethodGet_ExpectedStatusOk() {
         ResponseEntity<ClientDto[]> response = this.testRestTemplate
                 .exchange("/v1/client", HttpMethod.GET, null, ClientDto[].class);
 
@@ -69,7 +69,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void findClientTest() {
+    public void findClient_WhenSendMethodGetById_ExpectedStatusOk() {
         ClientEntity client = this.clientRepository.save(this.client);
 
         ResponseEntity<ClientDto> response = this.testRestTemplate
@@ -80,7 +80,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void updateClientTest() {
+    public void updateClient_WhenSendMethodUpdateById_ExpectedStatusOk() {
         ClientEntity client = this.clientRepository.save(this.client);
 
         ClientFormDto clientFormDto = ClientFormDtoFixture.getDefault();
@@ -96,7 +96,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void deleteClientTest() {
+    public void deleteClient_WhenSendMethodDeleteById_ExpectedStatusOk() {
         ClientEntity client = this.clientRepository.save(this.client);
 
         ResponseEntity<Void> response = this.testRestTemplate

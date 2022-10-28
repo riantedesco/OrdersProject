@@ -21,24 +21,29 @@ public class ProductOrderServiceTest {
     private ProductService productService;
 
     @Test
-    void shouldNotSave ()  {
-        Exception exceptionIdProduct = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
+    void saveProductOrder_WhenSendSaveWithInvalidIdProduct_ExpectedNotFoundAttributeException ()  {
+        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.productOrderService.save(ProductOrderFormDtoFixture.getWithInvalidIdProduct());
         });
+        Assertions.assertTrue(exception.getMessage().contains("Product not found"));
+    }
 
-        Exception exceptionActiveProduct = Assertions.assertThrows(InactiveProductException.class, () -> {
+    @Test
+    void saveProductOrder_WhenSendSaveWithInactiveProduct_ExpectedInactiveProductException ()  {
+        Exception exception = Assertions.assertThrows(InactiveProductException.class, () -> {
             ProductDto product = this.productService.save(ProductFormDtoFixture.getWithInactiveProduct());
             this.productOrderService.save(ProductOrderFormDtoFixture.getWithInactiveProduct(product.getId()));
         });
+        Assertions.assertTrue(exception.getMessage().contains("Product inactive"));
+    }
 
-        Exception exceptionQuantity = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+    @Test
+    void saveProductOrder_WhenSendSaveWithInvalidQuantity_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
             this.productService.save(ProductFormDtoFixture.getDefault());
             this.productOrderService.save(ProductOrderFormDtoFixture.getWithInvalidQuantity());
         });
-
-        Assertions.assertTrue(exceptionIdProduct.getMessage().contains("Product not found"));
-        Assertions.assertTrue(exceptionActiveProduct.getMessage().contains("Product inactive"));
-        Assertions.assertTrue(exceptionQuantity.getMessage().contains("Quantity must not be less than or equal to 0"));
+        Assertions.assertTrue(exception.getMessage().contains("Quantity must not be less than or equal to 0"));
     }
 
 }

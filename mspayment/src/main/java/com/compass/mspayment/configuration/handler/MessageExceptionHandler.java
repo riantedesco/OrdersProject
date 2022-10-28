@@ -1,4 +1,4 @@
-package com.compass.mspayment.exception.handler;
+package com.compass.mspayment.configuration.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

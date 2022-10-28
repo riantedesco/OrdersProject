@@ -1,4 +1,4 @@
-package com.compass.msorder.swagger;
+package com.compass.msorder.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class SwaggerConfigurations {
+public class SwaggerConfig {
 
     @Bean
     public Docket api() {

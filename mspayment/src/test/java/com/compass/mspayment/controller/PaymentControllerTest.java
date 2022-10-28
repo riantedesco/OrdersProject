@@ -38,11 +38,11 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void findPaymentTest() {
+    public void findPayment_WhenSendMethodGetWithIdOrderAndCpfClient_ExpectedStatusOk() {
         PaymentEntity payment = this.paymentRepository.save(this.payment);
 
         ResponseEntity<PaymentDto> response = this.testRestTemplate
-                .exchange("/v1/payment/find?idOrder=" + payment.getId() +  "&cpfClient=" + payment.getCpfClient(),
+                .exchange("/v1/payment/find?idOrder=" + payment.getIdOrder() +  "&cpfClient=" + payment.getCpfClient(),
                         HttpMethod.GET, null, PaymentDto.class);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);

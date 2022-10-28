@@ -5,7 +5,9 @@ import com.compass.msorder.domain.OrderEntity;
 import com.compass.msorder.domain.ProductEntity;
 import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.OrderDto;
+import com.compass.msorder.domain.dto.form.OrderFormDto;
 import com.compass.msorder.domain.dto.form.OrderUpdateFormDto;
+import com.compass.msorder.fixture.OrderFormDtoFixture;
 import com.compass.msorder.fixture.OrderUpdateFormDtoFixture;
 import com.compass.msorder.repository.ClientRepository;
 import com.compass.msorder.repository.OrderRepository;
@@ -85,27 +87,27 @@ public class OrderControllerTest {
 
     }
 
-//    @Test
-//    public void createOrderTest() {
-//        OrderFormDto orderFormDto = OrderFormDtoFixture.getDefault();
-//
-//        HttpEntity<OrderFormDto> httpEntity = new HttpEntity<>(orderFormDto);
-//
+    @Test
+    public void saveOrder_WhenSendMethodPost_ExpectedStatusOk() {
+        OrderFormDto orderFormDto = OrderFormDtoFixture.getDefault();
+
+        HttpEntity<OrderFormDto> httpEntity = new HttpEntity<>(orderFormDto);
+
 //        List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 //        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 //        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
 //        messageConverters.add(converter);
 //        this.testRestTemplate.getRestTemplate().setMessageConverters(messageConverters);
-//
-//        ResponseEntity<OrderDto> response = this.testRestTemplate
-//                .exchange("/v1/order", HttpMethod.POST, httpEntity, OrderDto.class);
-//
-//        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-//        Assertions.assertEquals(response.getBody().getNumber(), 1111L);
-//    }
+
+        ResponseEntity<OrderDto> response = this.testRestTemplate
+                .exchange("/v1/order", HttpMethod.POST, httpEntity, OrderDto.class);
+
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        Assertions.assertEquals(response.getBody().getNumber(), 1111L);
+    }
 
     @Test
-    public void findOrderTest() {
+    public void findOrder_WhenSendMethodGetByIdAndNumberAndCpfClient_ExpectedStatusOk() {
         this.clientRepository.save(this.client);
         this.productRepository.save(this.product);
         this.productOrderRepository.save(this.productOrder);
@@ -120,7 +122,7 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void updateOrderTest() {
+    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatusOk() {
         this.clientRepository.save(this.client);
         this.productRepository.save(this.product);
         this.productOrderRepository.save(this.productOrder);

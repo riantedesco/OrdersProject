@@ -1,6 +1,5 @@
 package com.compass.msorder.service;
 
-import com.compass.msorder.domain.dto.ClientDto;
 import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ClientFormDtoFixture;
@@ -9,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
 @SpringBootTest
 public class ClientServiceTest {
 
@@ -18,32 +15,47 @@ public class ClientServiceTest {
     private ClientService clientService;
 
     @Test
-    void shouldNotSave ()  {
-        Exception exceptionCpf = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+    void saveClient_WhenSendSaveWithInvalidCpf_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
             this.clientService.save(ClientFormDtoFixture.getWithInvalidCpf());
         });
-        Exception exceptionName = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidName());
-        });
-        Exception exceptionSex = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidSex());
-        });
-        Exception exceptionEmail = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidEmail());
-        });
-        Exception exceptionPhone = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidPhone());
-        });
-
-        Assertions.assertTrue(exceptionCpf.getMessage().contains("Cpf must  11 characters"));
-        Assertions.assertTrue(exceptionName.getMessage().contains("Name must contain at least 3 characters"));
-        Assertions.assertTrue(exceptionSex.getMessage().contains("Invalid sex"));
-        Assertions.assertTrue(exceptionEmail.getMessage().contains("Invalid email"));
-        Assertions.assertTrue(exceptionPhone.getMessage().contains("Phone must contain 11 characters"));
+        Assertions.assertTrue(exception.getMessage().contains("Cpf must  11 characters"));
     }
 
     @Test
-    void shouldNotFind ()  {
+    void saveClient_WhenSendSaveWithInvalidName_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+            this.clientService.save(ClientFormDtoFixture.getWithInvalidName());
+        });
+        Assertions.assertTrue(exception.getMessage().contains("Name must contain at least 3 characters"));
+    }
+
+    @Test
+    void saveClient_WhenSendSaveWithInvalidSex_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+            this.clientService.save(ClientFormDtoFixture.getWithInvalidSex());
+        });
+        Assertions.assertTrue(exception.getMessage().contains("Invalid sex"));
+    }
+
+    @Test
+    void saveClient_WhenSendSaveWithInvalidEmail_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+            this.clientService.save(ClientFormDtoFixture.getWithInvalidEmail());
+        });
+        Assertions.assertTrue(exception.getMessage().contains("Invalid email"));
+    }
+
+    @Test
+    void saveClient_WhenSendSaveWithInvalidPhone_ExpectedInvalidAttributeException ()  {
+        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
+            this.clientService.save(ClientFormDtoFixture.getWithInvalidPhone());
+        });
+        Assertions.assertTrue(exception.getMessage().contains("Phone must contain 11 characters"));
+    }
+
+    @Test
+    void findClient_WhenSendFindByIdWithNotFoundClient_ExpectedNotFoundAttributeException ()  {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.clientService.find(5000L);
         });
@@ -51,7 +63,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldNotUpdate () {
+    void updateClient_WhenSendUpdateByIdWithNotFoundClient_ExpectedNotFoundAttributeException () {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.clientService.update(5000L, ClientFormDtoFixture.getDefault());
         });
@@ -59,7 +71,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldNotDelete () {
+    void deleteClient_WhenSendDeleteByIdWithNotFoundClient_ExpectedNotFoundAttributeException () {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.clientService.delete(5000L);
         });

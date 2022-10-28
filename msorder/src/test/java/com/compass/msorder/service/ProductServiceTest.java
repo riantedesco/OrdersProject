@@ -1,17 +1,12 @@
 package com.compass.msorder.service;
 
-import com.compass.msorder.domain.dto.ClientDto;
-import com.compass.msorder.domain.dto.ProductDto;
 import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
-import com.compass.msorder.fixture.ClientFormDtoFixture;
 import com.compass.msorder.fixture.ProductFormDtoFixture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 public class ProductServiceTest {
@@ -20,7 +15,7 @@ public class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    void shouldNotSave ()  {
+    void saveProduct_WhenSendSaveWithInvalidPrice_ExpectedInvalidAttributeException ()  {
         Exception exceptionPrice = Assertions.assertThrows(InvalidAttributeException.class, () -> {
             this.productService.save(ProductFormDtoFixture.getWithInvalidPrice());
         });
@@ -28,7 +23,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void shouldNotFind ()  {
+    void findProduct_WhenSendFindByIdWithNotFoundProduct_ExpectedNotFoundAttributeException ()  {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.productService.find(5000L);
         });
@@ -36,7 +31,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void shouldNotUpdate () {
+    void updateProduct_WhenSendUpdateByIdWithNotFoundProduct_ExpectedNotFoundAttributeException () {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.productService.update(5000L, ProductFormDtoFixture.getDefault());
         });
@@ -44,7 +39,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void shouldNotDelete () {
+    void deleteProduct_WhenSendDeleteByIdWithNotFoundProduct_ExpectedNotFoundAttributeException () {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.productService.delete(5000L);
         });

@@ -14,7 +14,7 @@ public class OrderServiceTest {
     private OrderService orderService;
 
     @Test
-    void shouldNotFind ()  {
+    void findOrder_WhenSendFindByIdAndNumberAndCpfClientWithNotFoundOrder_ExpectedNotFoundAttributeException ()  {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.orderService.findByIdNumberAndCpfClient(5000L, 5000L, "111.111.111-11");
         });
@@ -22,7 +22,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void shouldNotUpdate () {
+    void updateOrder_WhenSendUpdateByIdWithNotFoundOrder_ExpectedNotFoundAttributeException () {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.orderService.update(5000L, OrderUpdateFormDtoFixture.getDefault());
         });

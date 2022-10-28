@@ -40,7 +40,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void createProductTest() {
+    public void saveProduct_WhenSendMethodPost_ExpectedStatusOk() {
 
         ProductFormDto productFormDto = ProductFormDtoFixture.getDefault();
 
@@ -54,7 +54,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void listProductTest() {
+    public void listProducts_WhenSendMethodGet_ExpectedStatusOk() {
 
         ResponseEntity<ProductDto[]> response = this.testRestTemplate
                 .exchange("/v1/product", HttpMethod.GET, null, ProductDto[].class);
@@ -63,7 +63,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void findProductTest() {
+    public void findProduct_WhenSendMethodGetById_ExpectedStatusOk() {
         ProductEntity product = this.productRepository.save(this.product);
 
         ResponseEntity<ProductDto> response = this.testRestTemplate
@@ -74,7 +74,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void updateProductTest() {
+    public void updateProduct_WhenSendMethodUpdateById_ExpectedStatusOk() {
 
         ProductEntity product = this.productRepository.save(this.product);
 
@@ -91,7 +91,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void deleteProductTest() {
+    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatusOk() {
 
         ProductEntity product = this.productRepository.save(this.product);
 

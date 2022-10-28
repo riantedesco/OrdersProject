@@ -16,7 +16,7 @@ public class PaymentServiceTest {
     private PaymentService paymentService;
 
     @Test
-    void shouldSaveWithPaymentConfirmed ()  {
+    void savePayment_WhenSendSaveWithPriceLessThan1000_ExpectedStatusPaymentConfirmed ()  {
         this.paymentService.save(OrderListenerDtoFixture.getWithAuthorizedPrice());
         PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithAuthorizedPrice().getIdOrder(),
                 OrderListenerDtoFixture.getWithAuthorizedPrice().getCpfClient());
@@ -24,7 +24,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    void shouldSaveWithPaymentUnauthorized ()  {
+    void savePayment_WhenSendSaveWithPriceGreaterThanOrEqualTo1000_ExpectedStatusPaymentUnauthorized ()  {
         this.paymentService.save(OrderListenerDtoFixture.getWithUnauthorizedPrice());
         PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithUnauthorizedPrice().getIdOrder(),
                 OrderListenerDtoFixture.getWithUnauthorizedPrice().getCpfClient());
@@ -32,7 +32,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    void shouldNotFind ()  {
+    void findClient_WhenSendFindByIdWithNotFoundPayment_ExpectedNotFoundAttributeException ()  {
         Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
             this.paymentService.findByIdOrderAndCpfClient(5000L, "999.999.999-99");
         });

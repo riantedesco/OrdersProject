@@ -1,4 +1,4 @@
-package com.compass.mspayment.exception.handler;
+package com.compass.mspayment.configuration.handler;
 
 import com.compass.mspayment.exception.NotFoundAttributeException;
 import org.springframework.http.HttpStatus;
