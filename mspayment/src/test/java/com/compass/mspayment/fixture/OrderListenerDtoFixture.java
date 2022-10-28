@@ -3,7 +3,7 @@ package com.compass.mspayment.fixture;
 import com.compass.mspayment.listener.order.dto.OrderListenerDto;
 import com.compass.mspayment.util.constants.StatusOrderOption;
 
-public class PaymentFormDtoFixture {
+public class OrderListenerDtoFixture {
 
     public static OrderListenerDto getWithAuthorizedPrice() {
         OrderListenerDto orderListenerDto = OrderListenerDto.builder()

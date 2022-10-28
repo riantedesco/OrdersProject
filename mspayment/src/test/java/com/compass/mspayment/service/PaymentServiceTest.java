@@ -2,7 +2,7 @@ package com.compass.mspayment.service;
 
 import com.compass.mspayment.domain.dto.PaymentDto;
 import com.compass.mspayment.exception.NotFoundAttributeException;
-import com.compass.mspayment.fixture.PaymentFormDtoFixture;
+import com.compass.mspayment.fixture.OrderListenerDtoFixture;
 import com.compass.mspayment.util.constants.StatusOrderOption;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,17 +17,17 @@ public class PaymentServiceTest {
 
     @Test
     void shouldSaveWithPaymentConfirmed ()  {
-        this.paymentService.save(PaymentFormDtoFixture.getWithAuthorizedPrice());
-        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(PaymentFormDtoFixture.getWithAuthorizedPrice().getIdOrder(),
-                PaymentFormDtoFixture.getWithAuthorizedPrice().getCpfClient());
+        this.paymentService.save(OrderListenerDtoFixture.getWithAuthorizedPrice());
+        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithAuthorizedPrice().getIdOrder(),
+                OrderListenerDtoFixture.getWithAuthorizedPrice().getCpfClient());
         Assertions.assertEquals(payment.getStatus(), StatusOrderOption.PAYMENT_CONFIRMED);
     }
 
     @Test
     void shouldSaveWithPaymentUnauthorized ()  {
-        this.paymentService.save(PaymentFormDtoFixture.getWithUnauthorizedPrice());
-        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(PaymentFormDtoFixture.getWithUnauthorizedPrice().getIdOrder(),
-                PaymentFormDtoFixture.getWithUnauthorizedPrice().getCpfClient());
+        this.paymentService.save(OrderListenerDtoFixture.getWithUnauthorizedPrice());
+        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithUnauthorizedPrice().getIdOrder(),
+                OrderListenerDtoFixture.getWithUnauthorizedPrice().getCpfClient());
         Assertions.assertEquals(payment.getStatus(), StatusOrderOption.PAYMENT_UNAUTHORIZED);
     }
 

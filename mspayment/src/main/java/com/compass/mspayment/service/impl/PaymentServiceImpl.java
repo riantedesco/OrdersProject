@@ -4,11 +4,11 @@ import com.compass.mspayment.domain.PaymentEntity;
 import com.compass.mspayment.domain.dto.PaymentDto;
 import com.compass.mspayment.exception.NotFoundAttributeException;
 import com.compass.mspayment.listener.order.dto.OrderListenerDto;
-import com.compass.mspayment.publisher.order.dto.OrderPublisherDto;
+import com.compass.mspayment.publisher.order.OrderPublisher;
 import com.compass.mspayment.repository.PaymentRepository;
 import com.compass.mspayment.service.PaymentService;
-import com.compass.mspayment.util.constants.RabbitMQConstants;
 import com.compass.mspayment.util.constants.StatusOrderOption;
+import com.compass.mspayment.util.validation.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,9 @@ import java.util.Optional;
 public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
+	private OrderPublisher orderPublisher;
+
+	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
 	@Autowired
@@ -27,6 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Autowired
 	private ModelMapper mapper;
+
+	@Autowired
+	private Validation validation;
 
 	@Override
 	public void save(OrderListenerDto body) {
@@ -39,10 +45,9 @@ public class PaymentServiceImpl implements PaymentService {
 			payment.setStatus(StatusOrderOption.PAYMENT_CONFIRMED);
 		}
 
+		validation.validatePayment(payment);
 		this.paymentRepository.save(payment);
-
-		OrderPublisherDto orderPublisherDto = new OrderPublisherDto(payment.getId(), payment.getIdOrder(), payment.getStatus());
-		rabbitTemplate.convertAndSend(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.PAYMENT_NOTIFICATION_ROUTINGKEY_NAME, orderPublisherDto);
+		orderPublisher.publishOrder(payment);
 	}
 
 	@Override
