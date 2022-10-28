@@ -21,7 +21,7 @@
 
 > A documentação dos endpoints foi feita com Swagger
   > Swagger do msorder: http://localhost:7071/swagger-ui.html
-  > Swagger do msorder: http://localhost:7072/swagger-ui.html
+  > Swagger do mspayment: http://localhost:7072/swagger-ui.html
 
 > Link do vídeo de apresentação:
 https://www.loom.com/embed/a432993702114ec3b2fc254a8240321b
