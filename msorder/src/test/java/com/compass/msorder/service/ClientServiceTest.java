@@ -1,80 +1,114 @@
 package com.compass.msorder.service;
 
-import com.compass.msorder.exception.InvalidAttributeException;
+import com.compass.msorder.domain.dto.ClientDto;
 import com.compass.msorder.exception.NotFoundAttributeException;
-import com.compass.msorder.fixture.ClientFormDtoFixture;
-import org.junit.jupiter.api.Assertions;
+import com.compass.msorder.fixture.ClientFixture;
+import com.compass.msorder.repository.ClientRepository;
+import com.compass.msorder.service.impl.ClientServiceImpl;
+import com.compass.msorder.util.validation.Validation;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.*;
+import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
-@SpringBootTest
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
+
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor
 public class ClientServiceTest {
 
-    @Autowired
-    private ClientService clientService;
+    @Mock
+    private ClientRepository clientRepository;
 
-    @Test
-    void saveClient_WhenSendSaveWithInvalidCpf_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidCpf());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Cpf must  11 characters"));
+    @Spy
+    private ModelMapper mapper;
+
+    @Mock
+    private Validation validation;
+
+    @InjectMocks
+    private ClientServiceImpl clientService;
+
+    @BeforeEach
+    public void setup(){
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void saveClient_WhenSendSaveWithInvalidName_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidName());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Name must contain at least 3 characters"));
+    void saveClient_WhenSendSaveClientValid_ExpectedClient ()  {
+        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
+        clientService.save(ClientFixture.getClientFormDto());
+//        ClientDto response = clientService.save(ClientFixture.getClientFormDto());
+
+        assertEquals(ClientFixture.getClientDto().getId(), ClientFixture.getClientEntity().getId());
+//        assertNotNull(response);
     }
 
     @Test
-    void saveClient_WhenSendSaveWithInvalidSex_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidSex());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Invalid sex"));
+    void listClient_WhenSendListClients_ExpectedClients ()  {
+        when(clientRepository.findAll()).thenReturn(List.of(ClientFixture.getClientEntity()));
+        List<ClientDto> response = clientService.list();
+
+        assertFalse(response.isEmpty());
     }
 
     @Test
-    void saveClient_WhenSendSaveWithInvalidEmail_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidEmail());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Invalid email"));
+    void findClient_WhenSendFindClientWithIdValid_ExpectedClient ()  {
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(ClientFixture.getClientEntity()));
+        ClientDto response = clientService.find(ClientFixture.getClientEntity().getId());
+
+        assertNotNull(response);
     }
 
     @Test
-    void saveClient_WhenSendSaveWithInvalidPhone_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.clientService.save(ClientFormDtoFixture.getWithInvalidPhone());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Phone must contain 11 characters"));
+    void findClient_WhenSendFindClientWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> clientService.find(1L));
+
+        assertNotNull(response);
+        assertEquals("Client not found", response.getMessage());
     }
 
     @Test
-    void findClient_WhenSendFindByIdWithNotFoundClient_ExpectedNotFoundAttributeException ()  {
-        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
-            this.clientService.find(5000L);
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Client not found"));
+    void updateClient_WhenSendUpdateClientWithIdValid_ExpectedClient ()  {
+        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
+        ClientDto response = clientService.update(ClientFixture.getClientEntity().getId(), ClientFixture.getClientFormDto());
+
+        assertEquals(ClientFixture.getClientDto().getId(), response.getId());
+        assertNotNull(response);
     }
 
     @Test
-    void updateClient_WhenSendUpdateByIdWithNotFoundClient_ExpectedNotFoundAttributeException () {
-        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
-            this.clientService.update(5000L, ClientFormDtoFixture.getDefault());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Client not found"));
+    void updateClient_WhenSendUpdateClientWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> clientService.update(1L, ClientFixture.getClientFormDto()));
+
+        assertNotNull(response);
+        assertEquals("Client not found", response.getMessage());
     }
 
     @Test
-    void deleteClient_WhenSendDeleteByIdWithNotFoundClient_ExpectedNotFoundAttributeException () {
-        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
-            this.clientService.delete(5000L);
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Client not found"));
+    void deleteClient_WhenSendDeleteClientWithIdValid_ExpectedOk ()  {
+        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
+        ClientDto response = clientService.save(ClientFixture.getClientFormDto());
+
+        doNothing().when(clientRepository).deleteById(response.getId());
+        clientService.delete(response.getId());
+
+        Mockito.verify(clientRepository, times(1)).deleteById(response.getId());
     }
+
+    @Test
+    void deleteClient_WhenSendDeleteClientWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> clientService.delete(1L));
+
+        assertNotNull(response);
+        assertEquals("Client not found", response.getMessage());
+    }
+
 }

@@ -1,15 +1,10 @@
 package com.compass.msorder.controller;
 
 import com.compass.msorder.domain.ClientEntity;
-import com.compass.msorder.domain.ProductEntity;
 import com.compass.msorder.domain.dto.ClientDto;
-import com.compass.msorder.domain.dto.ProductDto;
 import com.compass.msorder.domain.dto.form.ClientFormDto;
-import com.compass.msorder.domain.dto.form.ProductFormDto;
-import com.compass.msorder.fixture.ClientFormDtoFixture;
-import com.compass.msorder.fixture.ProductFormDtoFixture;
+import com.compass.msorder.fixture.ClientFixture;
 import com.compass.msorder.repository.ClientRepository;
-import com.compass.msorder.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -49,7 +44,7 @@ public class ClientControllerTest {
 
     @Test
     public void saveClient_WhenSendMethodPost_ExpectedStatusOk() {
-        ClientFormDto clientFormDto = ClientFormDtoFixture.getDefault();
+        ClientFormDto clientFormDto = ClientFixture.getClientFormDto();
 
         HttpEntity<ClientFormDto> httpEntity = new HttpEntity<>(clientFormDto);
 
@@ -83,7 +78,7 @@ public class ClientControllerTest {
     public void updateClient_WhenSendMethodUpdateById_ExpectedStatusOk() {
         ClientEntity client = this.clientRepository.save(this.client);
 
-        ClientFormDto clientFormDto = ClientFormDtoFixture.getDefault();
+        ClientFormDto clientFormDto = ClientFixture.getClientFormDto();
         clientFormDto.setName("Client updated");
 
         HttpEntity<ClientFormDto> httpEntity = new HttpEntity<>(clientFormDto);

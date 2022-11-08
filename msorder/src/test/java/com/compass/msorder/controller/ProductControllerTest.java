@@ -3,7 +3,7 @@ package com.compass.msorder.controller;
 import com.compass.msorder.domain.ProductEntity;
 import com.compass.msorder.domain.dto.ProductDto;
 import com.compass.msorder.domain.dto.form.ProductFormDto;
-import com.compass.msorder.fixture.ProductFormDtoFixture;
+import com.compass.msorder.fixture.ProductFixture;
 import com.compass.msorder.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,7 +42,7 @@ public class ProductControllerTest {
     @Test
     public void saveProduct_WhenSendMethodPost_ExpectedStatusOk() {
 
-        ProductFormDto productFormDto = ProductFormDtoFixture.getDefault();
+        ProductFormDto productFormDto = ProductFixture.getProductFormDto();
 
         HttpEntity<ProductFormDto> httpEntity = new HttpEntity<>(productFormDto);
 
@@ -78,7 +78,7 @@ public class ProductControllerTest {
 
         ProductEntity product = this.productRepository.save(this.product);
 
-        ProductFormDto productFormDto = ProductFormDtoFixture.getDefault();
+        ProductFormDto productFormDto = ProductFixture.getProductFormDto();
         productFormDto.setName("Product updated");
 
         HttpEntity<ProductFormDto> httpEntity = new HttpEntity<>(productFormDto);

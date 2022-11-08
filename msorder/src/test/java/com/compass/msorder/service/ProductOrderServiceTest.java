@@ -1,49 +1,80 @@
 package com.compass.msorder.service;
 
 import com.compass.msorder.domain.dto.ProductDto;
+import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.exception.InactiveProductException;
-import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
-import com.compass.msorder.fixture.ProductFormDtoFixture;
-import com.compass.msorder.fixture.ProductOrderFormDtoFixture;
-import org.junit.jupiter.api.Assertions;
+import com.compass.msorder.fixture.ProductFixture;
+import com.compass.msorder.fixture.ProductOrderFixture;
+import com.compass.msorder.repository.ProductOrderRepository;
+import com.compass.msorder.repository.ProductRepository;
+import com.compass.msorder.service.impl.ProductOrderServiceImpl;
+import com.compass.msorder.util.validation.Validation;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor
 public class ProductOrderServiceTest {
 
-    @Autowired
-    private ProductOrderService productOrderService;
+    @Mock
+    private ProductOrderRepository productOrderRepository;
 
-    @Autowired
-    private ProductService productService;
+    @Mock
+    private ProductRepository productRepository;
 
-    @Test
-    void saveProductOrder_WhenSendSaveWithInvalidIdProduct_ExpectedNotFoundAttributeException ()  {
-        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
-            this.productOrderService.save(ProductOrderFormDtoFixture.getWithInvalidIdProduct());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Product not found"));
+    @Spy
+    private ModelMapper mapper;
+
+    @Mock
+    private Validation validation;
+
+    @InjectMocks
+    private ProductOrderServiceImpl productOrderService;
+
+    @BeforeEach
+    public void setup(){
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveWithInactiveProduct_ExpectedInactiveProductException ()  {
-        Exception exception = Assertions.assertThrows(InactiveProductException.class, () -> {
-            ProductDto product = this.productService.save(ProductFormDtoFixture.getWithInactiveProduct());
-            this.productOrderService.save(ProductOrderFormDtoFixture.getWithInactiveProduct(product.getId()));
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Product inactive"));
+    void saveProductOrder_WhenSendSaveProductOrderValid_ExpectedProductOrder ()  {
+        when(productRepository.save(ProductFixture.getProductEntity())).thenReturn(ProductFixture.getProductEntity());
+
+        when(productOrderRepository.save(ProductOrderFixture.getProductOrderEntity())).thenReturn(ProductOrderFixture.getProductOrderEntity());
+        ProductOrderDto response = productOrderService.save(ProductOrderFixture.getProductOrderFormDto());
+
+        assertEquals(ProductOrderFixture.getProductOrderDto().getId(), response.getId());
+        assertNotNull(response);
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveWithInvalidQuantity_ExpectedInvalidAttributeException ()  {
-        Exception exception = Assertions.assertThrows(InvalidAttributeException.class, () -> {
-            this.productService.save(ProductFormDtoFixture.getDefault());
-            this.productOrderService.save(ProductOrderFormDtoFixture.getWithInvalidQuantity());
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Quantity must not be less than or equal to 0"));
+    void saveProductOrder_WhenSendSaveProductOrderWithInvalidProduct_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInvalidIdProduct()));
+
+        assertNotNull(response);
+        assertEquals("Product not found", response.getMessage());
+
+    }
+
+    @Test
+    void saveProductOrder_WhenSendSaveProductOrderWithInactiveProduct_ExpectedInactiveProductException ()  {
+        InactiveProductException response = assertThrows(InactiveProductException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInactiveProduct()));
+
+        assertNotNull(response);
+        assertEquals("Product inactive", response.getMessage());
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.compass.msorder.domain;
 
 import com.compass.msorder.util.constants.StatusOrderOption;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OrderEntity {
 
     @Id

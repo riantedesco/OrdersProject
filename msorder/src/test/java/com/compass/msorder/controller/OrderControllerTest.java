@@ -7,8 +7,7 @@ import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.OrderDto;
 import com.compass.msorder.domain.dto.form.OrderFormDto;
 import com.compass.msorder.domain.dto.form.OrderUpdateFormDto;
-import com.compass.msorder.fixture.OrderFormDtoFixture;
-import com.compass.msorder.fixture.OrderUpdateFormDtoFixture;
+import com.compass.msorder.fixture.OrderFixture;
 import com.compass.msorder.repository.ClientRepository;
 import com.compass.msorder.repository.OrderRepository;
 import com.compass.msorder.repository.ProductOrderRepository;
@@ -89,7 +88,7 @@ public class OrderControllerTest {
 
     @Test
     public void saveOrder_WhenSendMethodPost_ExpectedStatusOk() {
-        OrderFormDto orderFormDto = OrderFormDtoFixture.getDefault();
+        OrderFormDto orderFormDto = OrderFixture.getOrderFormDto();
 
         HttpEntity<OrderFormDto> httpEntity = new HttpEntity<>(orderFormDto);
 
@@ -128,7 +127,7 @@ public class OrderControllerTest {
         this.productOrderRepository.save(this.productOrder);
         OrderEntity order = this.orderRepository.save(this.order);
 
-        OrderUpdateFormDto orderUpdateFormDto = OrderUpdateFormDtoFixture.getDefault();
+        OrderUpdateFormDto orderUpdateFormDto = OrderFixture.getOrderUpdateFormDto();
         orderUpdateFormDto.setNumber(3333L);
 
         HttpEntity<OrderUpdateFormDto> httpEntity = new HttpEntity<>(orderUpdateFormDto);

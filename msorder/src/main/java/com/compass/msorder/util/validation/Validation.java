@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 @Service
 public class Validation {
+
 	public void validateClient (ClientEntity client) {
 		//validate cpf
 		String cpf = client.getCpf().replaceAll("\\D", "");
@@ -77,8 +78,8 @@ public class Validation {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
 	}
+
 	public void validateOrder (OrderEntity order) {
 		//validate dateTime
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -92,6 +93,7 @@ public class Validation {
 			throw new InvalidAttributeException("Price must not be less than 0");
 		}
 	}
+
 	public void validateProductOrder (ProductOrderEntity productOrder) {
 		//validate quantity
 		if (productOrder.getQuantity() <= 0) {

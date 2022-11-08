@@ -48,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDto save(OrderFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		OrderEntity order = mapper.map(body, OrderEntity.class);
-		order.setId(null);
 
 		if (body.getIdClient() != null) {
 			Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
@@ -64,7 +63,6 @@ public class OrderServiceImpl implements OrderService {
 				mapper.map(po, ProductOrderEntity.class);
 				ProductOrderDto productOrderResponse = this.productOrderService.save(po);
 				order.setTotal(order.getTotal() + productOrderResponse.getTotal());
-
 			}
 		}
 
