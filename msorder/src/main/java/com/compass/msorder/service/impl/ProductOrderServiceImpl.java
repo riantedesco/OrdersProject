@@ -1,5 +1,6 @@
 package com.compass.msorder.service.impl;
 
+import com.compass.msorder.domain.OrderEntity;
 import com.compass.msorder.domain.ProductEntity;
 import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.ProductOrderDto;
@@ -32,7 +33,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 	private Validation validation;
 
 	@Override
-	public ProductOrderDto save(ProductOrderFormDto body) {
+	public ProductOrderDto save(ProductOrderFormDto body, OrderEntity order) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		ProductOrderEntity productOrder = mapper.map(body, ProductOrderEntity.class);
 
@@ -45,6 +46,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 				throw new InactiveProductException("Product inactive");
 			}
 			productOrder.setProduct(product.get());
+			productOrder.setOrder(order);
 			productOrder.setTotal(body.getQuantity() * product.get().getPrice());
 		}
 

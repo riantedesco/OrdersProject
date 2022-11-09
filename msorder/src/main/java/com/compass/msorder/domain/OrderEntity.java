@@ -35,10 +35,8 @@ public class OrderEntity {
     private StatusOrderOption status;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id")
     private ClientEntity client;
-
-    @OneToMany
-    private List<ProductOrderEntity> productOrders;
 
 }

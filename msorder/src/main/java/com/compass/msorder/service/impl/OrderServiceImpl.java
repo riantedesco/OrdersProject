@@ -20,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
 	public OrderDto save(OrderFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		OrderEntity order = mapper.map(body, OrderEntity.class);
+		order.setId(null);
 
 		if (body.getIdClient() != null) {
 			Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
@@ -57,20 +59,27 @@ public class OrderServiceImpl implements OrderService {
 			order.setClient(client.get());
 		}
 
-		if (!body.getProductOrders().isEmpty()) {
-			List<ProductOrderFormDto> listProductOrder = body.getProductOrders();
-			for(ProductOrderFormDto po : listProductOrder) {
-				mapper.map(po, ProductOrderEntity.class);
-				ProductOrderDto productOrderResponse = this.productOrderService.save(po);
-				order.setTotal(order.getTotal() + productOrderResponse.getTotal());
-			}
-		}
-
 		order.setStatus(StatusOrderOption.ORDER_CREATED);
 		validation.validateOrder(order);
-        OrderEntity orderResponse = this.orderRepository.save(order);
-        paymentPublisher.publishPayment(order);
-        return mapper.map(orderResponse, OrderDto.class);
+		OrderEntity orderResponse = this.orderRepository.save(order);
+		OrderDto orderDtoResponse = mapper.map(orderResponse, OrderDto.class);
+
+		if (!body.getProductOrders().isEmpty()) {
+			List<ProductOrderFormDto> listProductOrderForm = body.getProductOrders();
+			List<ProductOrderDto> listProductOrder = new ArrayList<>();
+
+			for(ProductOrderFormDto productOrderFormDto : listProductOrderForm) {
+				mapper.map(productOrderFormDto, ProductOrderEntity.class);
+				ProductOrderDto productOrderResponse = this.productOrderService.save(productOrderFormDto, orderResponse);
+				order.setTotal(order.getTotal() + productOrderResponse.getTotal());
+				orderDtoResponse.setTotal(order.getTotal());
+				listProductOrder.add(productOrderResponse);
+			}
+			orderDtoResponse.setProductOrders(listProductOrder);
+		}
+
+		paymentPublisher.publishPayment(order);
+        return orderDtoResponse;
 	}
 
 	@Override

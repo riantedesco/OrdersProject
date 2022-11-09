@@ -26,7 +26,13 @@ public class ProductOrderEntity {
     private Double total = 0.00;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id")
     private ProductEntity product;
+
+    @NotNull
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id")
+    private OrderEntity order;
 
 }
