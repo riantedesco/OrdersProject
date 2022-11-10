@@ -6,6 +6,17 @@ import com.compass.msorder.domain.dto.form.ProductFormDto;
 
 public class ProductFixture {
 
+    public static ProductEntity getProductEntity() {
+        return ProductEntity.builder()
+                .id(1L)
+                .name("Product default")
+                .description("Description default")
+                .brand("Brand default")
+                .price(300.00)
+                .active(true)
+                .build();
+    }
+
     public static ProductFormDto getProductFormDto() {
         return ProductFormDto.builder()
                 .name("Product default")
@@ -27,17 +38,6 @@ public class ProductFixture {
                 .build();
     }
 
-    public static ProductEntity getProductEntity() {
-        return ProductEntity.builder()
-                .id(1L)
-                .name("Product default")
-                .description("Description default")
-                .brand("Brand default")
-                .price(300.00)
-                .active(true)
-                .build();
-    }
-
     public static ProductEntity getProductFormWithInvalidPrice() {
         return ProductEntity.builder()
                 .name("Product default")
@@ -48,8 +48,9 @@ public class ProductFixture {
                 .build();
     }
 
-    public static ProductFormDto getProductFormWithInactiveProduct() {
-        return ProductFormDto.builder()
+    public static ProductEntity getProductEntityWithInactiveProduct() {
+        return ProductEntity.builder()
+                .id(1L)
                 .name("Product default")
                 .description("Description default")
                 .brand("Brand default")

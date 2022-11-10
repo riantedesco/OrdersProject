@@ -17,6 +17,7 @@ public class ProductOrderFixture {
         return ProductOrderDto.builder()
                 .id(1L)
                 .quantity(2)
+                .total(600.00)
                 .product(ProductFixture.getProductDto())
                 .build();
     }
@@ -25,7 +26,9 @@ public class ProductOrderFixture {
         return ProductOrderEntity.builder()
                 .id(1L)
                 .quantity(2)
+                .total(600.00)
                 .product(ProductFixture.getProductEntity())
+                .order(OrderFixture.getOrderEntity())
                 .build();
     }
 
@@ -39,7 +42,7 @@ public class ProductOrderFixture {
     public static ProductOrderFormDto getProductOrderFormWithInactiveProduct() {
         return ProductOrderFormDto.builder()
                 .quantity(2)
-                .idProduct(500L)
+                .idProduct(ProductFixture.getProductEntityWithInactiveProduct().getId())
                 .build();
     }
 

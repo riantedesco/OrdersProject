@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,20 +24,18 @@ public class ClientController {
 
 	@ApiOperation(value = "Cadastra um cliente")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Retorna o cliente recém cadastrado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados"),
-			@ApiResponse(code = 500, message = "Foi gerada uma exceção, causada por um campo nulo"),
-	})
+			@ApiResponse(code = 201, message = "Retorna o cliente recém cadastrado"),
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
+			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ClientDto> save(@RequestBody @Valid ClientFormDto body) {
-		return ResponseEntity.ok(this.clientService.save(body));
+		return new ResponseEntity<>(this.clientService.save(body), HttpStatus.CREATED);
 	}
 
 	@ApiOperation(value = "Lista os clientes")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Retorna os clientes cadastrados"),
-	})
+			@ApiResponse(code = 200, message = "Retorna os clientes cadastrados")})
 	@GetMapping(produces = "application/json")
 	public ResponseEntity<List<ClientDto>> list() {
 		return ResponseEntity.ok(this.clientService.list());
@@ -45,8 +44,7 @@ public class ClientController {
 	@ApiOperation(value = "Busca um cliente pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o cliente encontrado"),
-			@ApiResponse(code = 400, message = "Cliente não encontrado"),
-	})
+			@ApiResponse(code = 404, message = "Cliente não encontrado")})
 	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<ClientDto> find(@PathVariable Long id) {
 		return ResponseEntity.ok(this.clientService.find(id));
@@ -55,9 +53,9 @@ public class ClientController {
 	@ApiOperation(value = "Atualiza um cliente pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o cliente atualizado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados ou cliente não encontrado"),
-			@ApiResponse(code = 500, message = "Foi gerada uma exceção, causada por um campo nulo"),
-	})
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
+			@ApiResponse(code = 404, message = "Cliente não encontrado"),
+			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ClientDto> update(@PathVariable Long id, @RequestBody @Valid ClientFormDto body) {
@@ -67,8 +65,7 @@ public class ClientController {
 	@ApiOperation(value = "Remove um cliente pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Cliente deletado"),
-			@ApiResponse(code = 400, message = "Cliente não encontrado"),
-	})
+			@ApiResponse(code = 404, message = "Cliente não encontrado")})
 	@DeleteMapping(value = "/{id}")
 	@Transactional
 	public ResponseEntity<?> delete(@PathVariable Long id) {

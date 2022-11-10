@@ -22,8 +22,7 @@ public class PaymentController {
 	@ApiOperation(value = "Busca um pagamento pelo id do pedido e cpf do cliente")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o pagamento encontrado"),
-			@ApiResponse(code = 400, message = "Pagamento não encontrado"),
-	})
+			@ApiResponse(code = 404, message = "Pagamento não encontrado")})
 	@GetMapping(value = "/find", produces = "application/json")
 	public ResponseEntity<PaymentDto> findByIdAndCpfClient(@RequestParam Long idOrder, @RequestParam String cpfClient) {
 		return ResponseEntity.ok(this.paymentService.findByIdOrderAndCpfClient(idOrder, cpfClient));

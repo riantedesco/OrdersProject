@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,20 +24,18 @@ public class ProductController {
 
 	@ApiOperation(value = "Cadastra um produto")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Retorna o produto recém cadastrado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados"),
-			@ApiResponse(code = 500, message = "Foi gerada uma exceção, causada por um campo nulo"),
-	})
+			@ApiResponse(code = 201, message = "Retorna o produto recém cadastrado"),
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
+			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ProductDto> save(@RequestBody @Valid ProductFormDto body) {
-		return ResponseEntity.ok(this.productService.save(body));
+		return new ResponseEntity<>(this.productService.save(body), HttpStatus.CREATED);
 	}
 
 	@ApiOperation(value = "Lista os produtos")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Retorna os produtos cadastrados"),
-	})
+			@ApiResponse(code = 200, message = "Retorna os produtos cadastrados")})
 	@GetMapping(produces = "application/json")
 	public ResponseEntity<List<ProductDto>> list() {
 		return ResponseEntity.ok(this.productService.list());
@@ -45,8 +44,7 @@ public class ProductController {
 	@ApiOperation(value = "Busca um produto pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o produto encontrado"),
-			@ApiResponse(code = 400, message = "Produto não encontrado"),
-	})
+			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<ProductDto> find(@PathVariable Long id) {
 		return ResponseEntity.ok(this.productService.find(id));
@@ -55,9 +53,9 @@ public class ProductController {
 	@ApiOperation(value = "Atualiza um produto pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o produto atualizado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados ou produto não encontrado"),
-			@ApiResponse(code = 500, message = "Foi gerada uma exceção, causada por um campo nulo"),
-	})
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
+			@ApiResponse(code = 404, message = "Produto não encontrado"),
+			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ProductDto> update(@PathVariable Long id, @RequestBody @Valid ProductFormDto body) {
@@ -67,8 +65,7 @@ public class ProductController {
 	@ApiOperation(value = "Remove um produto pelo id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Produto deletado"),
-			@ApiResponse(code = 400, message = "Produto não encontrado"),
-	})
+			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@DeleteMapping(value = "/{id}")
 	@Transactional
 	public ResponseEntity<?> delete(@PathVariable Long id) {

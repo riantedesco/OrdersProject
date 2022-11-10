@@ -1,41 +1,82 @@
 package com.compass.mspayment.service;
 
+import com.compass.mspayment.domain.PaymentEntity;
 import com.compass.mspayment.domain.dto.PaymentDto;
 import com.compass.mspayment.exception.NotFoundAttributeException;
-import com.compass.mspayment.fixture.OrderListenerDtoFixture;
-import com.compass.mspayment.util.constants.StatusOrderOption;
-import org.junit.jupiter.api.Assertions;
+import com.compass.mspayment.fixture.PaymentFixture;
+import com.compass.mspayment.publisher.order.OrderPublisher;
+import com.compass.mspayment.repository.PaymentRepository;
+import com.compass.mspayment.service.impl.PaymentServiceImpl;
+import com.compass.mspayment.util.validation.Validation;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
-@SpringBootTest
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor
 public class PaymentServiceTest {
 
-    @Autowired
-    private PaymentService paymentService;
+    @Mock
+    private OrderPublisher orderPublisher;
 
-    @Test
-    void savePayment_WhenSendSaveWithPriceLessThan1000_ExpectedStatusPaymentConfirmed ()  {
-        this.paymentService.save(OrderListenerDtoFixture.getWithAuthorizedPrice());
-        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithAuthorizedPrice().getIdOrder(),
-                OrderListenerDtoFixture.getWithAuthorizedPrice().getCpfClient());
-        Assertions.assertEquals(payment.getStatus(), StatusOrderOption.PAYMENT_CONFIRMED);
+    @Mock
+    private PaymentRepository paymentRepository;
+
+    @Spy
+    private ModelMapper mapper;
+
+    @Mock
+    private Validation validation;
+
+    @InjectMocks
+    private PaymentServiceImpl paymentService;
+
+    @BeforeEach
+    public void setup(){
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void savePayment_WhenSendSaveWithPriceGreaterThanOrEqualTo1000_ExpectedStatusPaymentUnauthorized ()  {
-        this.paymentService.save(OrderListenerDtoFixture.getWithUnauthorizedPrice());
-        PaymentDto payment = this.paymentService.findByIdOrderAndCpfClient(OrderListenerDtoFixture.getWithUnauthorizedPrice().getIdOrder(),
-                OrderListenerDtoFixture.getWithUnauthorizedPrice().getCpfClient());
-        Assertions.assertEquals(payment.getStatus(), StatusOrderOption.PAYMENT_UNAUTHORIZED);
+    void savePayment_WhenSendSavePaymentValidWithPriceLessThan1000_ExpectedStatusPaymentConfirmed ()  {
+        when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(PaymentFixture.getPaymentEntity());
+        paymentService.save(PaymentFixture.getPaymentFormDtoWithAuthorizedPrice());
+
+        verify(paymentRepository, times(1)).save(any(PaymentEntity.class));
     }
 
     @Test
-    void findClient_WhenSendFindByIdWithNotFoundPayment_ExpectedNotFoundAttributeException ()  {
-        Exception exception = Assertions.assertThrows(NotFoundAttributeException.class, () -> {
-            this.paymentService.findByIdOrderAndCpfClient(5000L, "999.999.999-99");
-        });
-        Assertions.assertTrue(exception.getMessage().contains("Payment not found"));
+    void savePayment_WhenSendSavePaymentValidWithPriceGreaterThanOrEqualTo1000_ExpectedStatusPaymentUnauthorized ()  {
+        when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(PaymentFixture.getPaymentEntity());
+        paymentService.save(PaymentFixture.getPaymentFormDtoWithUnauthorizedPrice());
+
+        verify(paymentRepository, times(1)).save(any(PaymentEntity.class));
+    }
+
+    @Test
+    void findPayment_WhenSendFindPaymentWithIdOrderOrCpfClientValid_ExpectedClient ()  {
+        when(paymentRepository.findByIdOrderAndCpfClient(anyLong(), anyString())).thenReturn(Optional.of(PaymentFixture.getPaymentEntity()));
+        PaymentDto response = paymentService.findByIdOrderAndCpfClient(PaymentFixture.getPaymentEntity().getIdOrder(), PaymentFixture.getPaymentEntity().getCpfClient());
+
+        assertNotNull(response);
+    }
+
+    @Test
+    void findPayment_WhenSendFindPaymentWithIdOrderOrCpfClientInvalid_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> paymentService.findByIdOrderAndCpfClient(5000L,  "999.999.999-99"));
+
+        assertNotNull(response);
+        assertEquals("Payment not found", response.getMessage());
     }
 }

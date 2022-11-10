@@ -1,141 +1,68 @@
 package com.compass.msorder.controller;
 
-import com.compass.msorder.domain.ClientEntity;
-import com.compass.msorder.domain.OrderEntity;
-import com.compass.msorder.domain.ProductEntity;
-import com.compass.msorder.domain.ProductOrderEntity;
-import com.compass.msorder.domain.dto.OrderDto;
-import com.compass.msorder.domain.dto.form.OrderFormDto;
-import com.compass.msorder.domain.dto.form.OrderUpdateFormDto;
 import com.compass.msorder.fixture.OrderFixture;
-import com.compass.msorder.repository.ClientRepository;
-import com.compass.msorder.repository.OrderRepository;
-import com.compass.msorder.repository.ProductOrderRepository;
-import com.compass.msorder.repository.ProductRepository;
-import com.compass.msorder.util.constants.StatusOrderOption;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import com.compass.msorder.service.OrderService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
+import static org.mockito.Mockito.when;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WebMvcTest(OrderController.class)
 public class OrderControllerTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private OrderController orderController;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    @MockBean
+    private OrderService orderService;
 
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private ProductOrderRepository productOrderRepository;
-
-    ClientEntity client;
-
-    ProductEntity product;
-
-    OrderEntity order;
-
-    ProductOrderEntity productOrder;
-
-    @BeforeAll
+    @BeforeEach
     public void setup() {
-        this.client = new ClientEntity();
-        client.setCpf("000.000.000-00");
-        client.setName("Client test");
-        client.setSex("Masculino");
-        client.setBirthdate(LocalDate.parse("2002-03-30"));
-        client.setEmail("test@email.com");
-        client.setPhone("(00)00000-0000");
-
-        this.product = new ProductEntity();
-        product.setName("Product test");
-        product.setDescription("Description test");
-        product.setBrand("Brand test");
-        product.setPrice(300.00);
-        product.setActive(true);
-
-        this.productOrder = new ProductOrderEntity();
-        productOrder.setQuantity(1);
-        productOrder.setProduct(product);
-
-        this.order = new OrderEntity();
-        order.setNumber(2222L);
-        order.setDateTime(LocalDateTime.now());
-        order.setStatus(StatusOrderOption.ORDER_CREATED);
-        order.setClient(client);
-        order.setProductOrders(List.of(productOrder));
-
+        standaloneSetup(this.orderController);
     }
 
     @Test
-    public void saveOrder_WhenSendMethodPost_ExpectedStatusOk() {
-        OrderFormDto orderFormDto = OrderFixture.getOrderFormDto();
+    public void saveOrder_WhenSendMethodPost_ExpectedStatus201() {
+        when(this.orderService.save(OrderFixture.getOrderFormDto())).thenReturn(OrderFixture.getOrderDto());
 
-        HttpEntity<OrderFormDto> httpEntity = new HttpEntity<>(orderFormDto);
-
-//        List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
-//        messageConverters.add(converter);
-//        this.testRestTemplate.getRestTemplate().setMessageConverters(messageConverters);
-
-        ResponseEntity<OrderDto> response = this.testRestTemplate
-                .exchange("/v1/order", HttpMethod.POST, httpEntity, OrderDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getNumber(), 1111L);
+        given()
+                .contentType("application/json")
+                .body(OrderFixture.getOrderFormDto())
+                .when()
+                .post("/v1/order")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
     }
 
     @Test
-    public void findOrder_WhenSendMethodGetByIdAndNumberAndCpfClient_ExpectedStatusOk() {
-        this.clientRepository.save(this.client);
-        this.productRepository.save(this.product);
-        this.productOrderRepository.save(this.productOrder);
-        OrderEntity order = this.orderRepository.save(this.order);
+    public void findOrder_WhenSendMethodGetByIdAndNumberAndCpfClient_ExpectedStatus200() {
+        when(this.orderService.findByIdNumberAndCpfClient(OrderFixture.getOrderDto().getId(), OrderFixture.getOrderEntity().getNumber(), OrderFixture.getOrderEntity().getClient().getCpf())).thenReturn(OrderFixture.getOrderDto());
 
-        ResponseEntity<OrderDto> response = this.testRestTemplate
-                .exchange("/v1/order/find?id=" + order.getId() + "&number=" + order.getNumber() + "&cpfClient=" + order.getClient().getCpf(),
-                        HttpMethod.GET, null, OrderDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getNumber(), 2222L);
+        given()
+                .param("id", OrderFixture.getOrderEntity().getId())
+                .param("number", OrderFixture.getOrderEntity().getNumber())
+                .param("cpfClient", OrderFixture.getOrderEntity().getClient().getCpf())
+                .when()
+                .get("/v1/order/find").then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatusOk() {
-        this.clientRepository.save(this.client);
-        this.productRepository.save(this.product);
-        this.productOrderRepository.save(this.productOrder);
-        OrderEntity order = this.orderRepository.save(this.order);
+    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatus200() {
+        when(this.orderService.update(OrderFixture.getOrderDto().getId(), OrderFixture.getOrderUpdateFormDto())).thenReturn(OrderFixture.getOrderUpdateDto());
 
-        OrderUpdateFormDto orderUpdateFormDto = OrderFixture.getOrderUpdateFormDto();
-        orderUpdateFormDto.setNumber(3333L);
-
-        HttpEntity<OrderUpdateFormDto> httpEntity = new HttpEntity<>(orderUpdateFormDto);
-
-        ResponseEntity<OrderDto> response = this.testRestTemplate
-                .exchange("/v1/order/" + order.getId(), HttpMethod.PUT, httpEntity, OrderDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getNumber(), 3333L);
+        given()
+                .contentType("application/json")
+                .body(OrderFixture.getOrderUpdateFormDto())
+                .when()
+                .put("/v1/order/{id}", OrderFixture.getOrderEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 }

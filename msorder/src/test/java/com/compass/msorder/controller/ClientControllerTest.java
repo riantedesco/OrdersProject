@@ -1,102 +1,91 @@
 package com.compass.msorder.controller;
 
-import com.compass.msorder.domain.ClientEntity;
-import com.compass.msorder.domain.dto.ClientDto;
-import com.compass.msorder.domain.dto.form.ClientFormDto;
 import com.compass.msorder.fixture.ClientFixture;
-import com.compass.msorder.repository.ClientRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import com.compass.msorder.service.ClientService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
+import java.util.List;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+@WebMvcTest(ClientController.class)
 public class ClientControllerTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private ClientController clientController;
 
-    @Autowired
-    private ClientRepository clientRepository;
+    @MockBean
+    private ClientService clientService;
 
-    ClientEntity client;
-
-    @BeforeAll
+    @BeforeEach
     public void setup() {
-        this.client = new ClientEntity();
-        client.setCpf("000.000.000-00");
-        client.setName("Client test");
-        client.setSex("Masculino");
-        client.setBirthdate(LocalDate.parse("2002-03-30"));
-        client.setEmail("test@email.com");
-        client.setPhone("(00)00000-0000");
+        standaloneSetup(this.clientController);
     }
 
     @Test
-    public void saveClient_WhenSendMethodPost_ExpectedStatusOk() {
-        ClientFormDto clientFormDto = ClientFixture.getClientFormDto();
+    public void saveClient_WhenSendMethodPost_ExpectedStatus201() {
+        when(this.clientService.save(ClientFixture.getClientFormDto())).thenReturn(ClientFixture.getClientDto());
 
-        HttpEntity<ClientFormDto> httpEntity = new HttpEntity<>(clientFormDto);
-
-        ResponseEntity<ClientDto> response = this.testRestTemplate
-                .exchange("/v1/client", HttpMethod.POST, httpEntity, ClientDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Client default");
+        given()
+                .contentType("application/json")
+                .body(ClientFixture.getClientFormDto())
+                .when()
+                .post("/v1/client")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
     }
 
     @Test
-    public void listClients_WhenSendMethodGet_ExpectedStatusOk() {
-        ResponseEntity<ClientDto[]> response = this.testRestTemplate
-                .exchange("/v1/client", HttpMethod.GET, null, ClientDto[].class);
+    public void findClient_WhenSendMethodGetById_ExpectedStatus200() {
+        when(this.clientService.find(ClientFixture.getClientEntity().getId())).thenReturn(ClientFixture.getClientDto());
 
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        given()
+                .when()
+                .get("/v1/client/{id}", ClientFixture.getClientEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void findClient_WhenSendMethodGetById_ExpectedStatusOk() {
-        ClientEntity client = this.clientRepository.save(this.client);
+    public void listClients_WhenSendMethodGet_ExpectedStatus200() {
+        when(this.clientService.list()).thenReturn(List.of(ClientFixture.getClientDto()));
 
-        ResponseEntity<ClientDto> response = this.testRestTemplate
-                .exchange("/v1/client/" + client.getId(), HttpMethod.GET, null, ClientDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Client test");
+        given()
+                .when()
+                .get("/v1/client")
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void updateClient_WhenSendMethodUpdateById_ExpectedStatusOk() {
-        ClientEntity client = this.clientRepository.save(this.client);
+    public void updateClient_WhenSendMethodUpdateById_ExpectedStatus200() {
+        when(this.clientService.update(ClientFixture.getClientEntity().getId(), ClientFixture.getClientFormDto())).thenReturn(ClientFixture.getClientDto());
 
-        ClientFormDto clientFormDto = ClientFixture.getClientFormDto();
-        clientFormDto.setName("Client updated");
-
-        HttpEntity<ClientFormDto> httpEntity = new HttpEntity<>(clientFormDto);
-
-        ResponseEntity<ClientDto> response = this.testRestTemplate
-                .exchange("/v1/client/" + client.getId(), HttpMethod.PUT, httpEntity, ClientDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Client updated");
+        given()
+                .contentType("application/json")
+                .body(ClientFixture.getClientFormDto())
+                .when()
+                .put("/v1/client/{id}", ClientFixture.getClientEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void deleteClient_WhenSendMethodDeleteById_ExpectedStatusOk() {
-        ClientEntity client = this.clientRepository.save(this.client);
+    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatus200() {
+        doNothing().when(this.clientService).delete(ClientFixture.getClientEntity().getId());
 
-        ResponseEntity<Void> response = this.testRestTemplate
-                .exchange("/v1/client/" + client.getId(), HttpMethod.DELETE, null, Void.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        given()
+                .when()
+                .delete("/v1/client/{id}", ClientFixture.getClientEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 }

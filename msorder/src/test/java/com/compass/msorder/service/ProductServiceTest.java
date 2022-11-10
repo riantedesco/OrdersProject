@@ -1,5 +1,6 @@
 package com.compass.msorder.service;
 
+import com.compass.msorder.domain.ProductEntity;
 import com.compass.msorder.domain.dto.ProductDto;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ProductFixture;
@@ -9,7 +10,10 @@ import com.compass.msorder.util.validation.Validation;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
@@ -43,9 +47,10 @@ public class ProductServiceTest {
 
     @Test
     void saveProduct_WhenSendSaveProductValid_ExpectedProduct ()  {
-        when(productRepository.save(ProductFixture.getProductEntity())).thenReturn(ProductFixture.getProductEntity());
+        when(productRepository.save(any(ProductEntity.class))).thenReturn(ProductFixture.getProductEntity());
         ProductDto response = productService.save(ProductFixture.getProductFormDto());
 
+        verify(productRepository, times(1)).save(any(ProductEntity.class));
         assertEquals(ProductFixture.getProductDto().getId(), response.getId());
         assertNotNull(response);
     }
@@ -76,7 +81,8 @@ public class ProductServiceTest {
 
     @Test
     void updateProduct_WhenSendUpdateProductWithIdValid_ExpectedProduct ()  {
-        when(productRepository.save(ProductFixture.getProductEntity())).thenReturn(ProductFixture.getProductEntity());
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
+        when(productRepository.save(any(ProductEntity.class))).thenReturn(ProductFixture.getProductEntity());
         ProductDto response = productService.update(ProductFixture.getProductEntity().getId(), ProductFixture.getProductFormDto());
 
         assertEquals(ProductFixture.getProductDto().getId(), response.getId());
@@ -93,13 +99,11 @@ public class ProductServiceTest {
 
     @Test
     void deleteProduct_WhenSendDeleteProductWithIdValid_ExpectedOk ()  {
-        when(productRepository.save(ProductFixture.getProductEntity())).thenReturn(ProductFixture.getProductEntity());
-        ProductDto response = productService.save(ProductFixture.getProductFormDto());
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
+        doNothing().when(productRepository).deleteById(anyLong());
+        productService.delete(ProductFixture.getProductEntity().getId());
 
-        doNothing().when(productRepository).deleteById(response.getId());
-        productService.delete(response.getId());
-
-        Mockito.verify(productRepository, times(1)).deleteById(response.getId());
+        verify(productRepository, times(1)).deleteById(anyLong());
     }
 
     @Test

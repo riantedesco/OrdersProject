@@ -2,15 +2,14 @@ package com.compass.mspayment.service.impl;
 
 import com.compass.mspayment.domain.PaymentEntity;
 import com.compass.mspayment.domain.dto.PaymentDto;
+import com.compass.mspayment.domain.dto.form.PaymentFormDto;
 import com.compass.mspayment.exception.NotFoundAttributeException;
-import com.compass.mspayment.listener.order.dto.OrderListenerDto;
 import com.compass.mspayment.publisher.order.OrderPublisher;
 import com.compass.mspayment.repository.PaymentRepository;
 import com.compass.mspayment.service.PaymentService;
 import com.compass.mspayment.util.constants.StatusOrderOption;
 import com.compass.mspayment.util.validation.Validation;
 import org.modelmapper.ModelMapper;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +22,6 @@ public class PaymentServiceImpl implements PaymentService {
 	private OrderPublisher orderPublisher;
 
 	@Autowired
-	private RabbitTemplate rabbitTemplate;
-
-	@Autowired
 	private PaymentRepository paymentRepository;
 
 	@Autowired
@@ -35,7 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
 	private Validation validation;
 
 	@Override
-	public void save(OrderListenerDto body) {
+	public void save(PaymentFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		PaymentEntity payment = mapper.map(body, PaymentEntity.class);
 

@@ -102,4 +102,5 @@ public class ClientFixture {
                 .phone("(99)99999-999")
                 .build();
     }
+
 }

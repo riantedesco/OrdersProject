@@ -1,52 +1,42 @@
 package com.compass.mspayment.controller;
 
-import com.compass.mspayment.domain.PaymentEntity;
-import com.compass.mspayment.domain.dto.PaymentDto;
-import com.compass.mspayment.repository.PaymentRepository;
-import com.compass.mspayment.util.constants.StatusOrderOption;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import com.compass.mspayment.fixture.PaymentFixture;
+import com.compass.mspayment.service.PaymentService;
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
+import static org.mockito.Mockito.when;
+
+@WebMvcTest(PaymentController.class)
 public class PaymentControllerTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private PaymentController paymentController;
 
-    @Autowired
-    private PaymentRepository paymentRepository;
+    @MockBean
+    private PaymentService paymentService;
 
-    PaymentEntity payment;
-
-    @BeforeAll
+    @BeforeEach
     public void setup() {
-        this.payment = new PaymentEntity();
-        payment.setIdOrder(1L);
-        payment.setCpfClient("000.000.000-00");
-        payment.setPrice(999.00);
-        payment.setStatus(StatusOrderOption.PAYMENT_CONFIRMED);
-
+        standaloneSetup(this.paymentController);
     }
 
     @Test
-    public void findPayment_WhenSendMethodGetWithIdOrderAndCpfClient_ExpectedStatusOk() {
-        PaymentEntity payment = this.paymentRepository.save(this.payment);
+    public void findPayment_WhenSendMethodGetWithIdOrderAndCpfClientValid_ExpectedStatus200() {
+        when(this.paymentService.findByIdOrderAndCpfClient(PaymentFixture.getPaymentEntity().getIdOrder(), PaymentFixture.getPaymentEntity().getCpfClient())).thenReturn(PaymentFixture.getPaymentDto());
 
-        ResponseEntity<PaymentDto> response = this.testRestTemplate
-                .exchange("/v1/payment/find?idOrder=" + payment.getIdOrder() +  "&cpfClient=" + payment.getCpfClient(),
-                        HttpMethod.GET, null, PaymentDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getIdOrder(), 1L);
-        Assertions.assertEquals(response.getBody().getCpfClient(), "000.000.000-00");
+        given().accept(ContentType.JSON)
+                .param("idOrder", PaymentFixture.getPaymentEntity().getIdOrder())
+                .param("cpfClient", PaymentFixture.getPaymentEntity().getCpfClient())
+                .when()
+                .get("/v1/payment/find").then()
+                .statusCode(HttpStatus.OK.value());
     }
 }

@@ -1,5 +1,6 @@
 package com.compass.msorder.service;
 
+import com.compass.msorder.domain.ClientEntity;
 import com.compass.msorder.domain.dto.ClientDto;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ClientFixture;
@@ -9,7 +10,10 @@ import com.compass.msorder.util.validation.Validation;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
@@ -43,12 +47,12 @@ public class ClientServiceTest {
 
     @Test
     void saveClient_WhenSendSaveClientValid_ExpectedClient ()  {
-        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
-        clientService.save(ClientFixture.getClientFormDto());
-//        ClientDto response = clientService.save(ClientFixture.getClientFormDto());
+        when(clientRepository.save(any(ClientEntity.class))).thenReturn(ClientFixture.getClientEntity());
+        ClientDto response = clientService.save(ClientFixture.getClientFormDto());
 
-        assertEquals(ClientFixture.getClientDto().getId(), ClientFixture.getClientEntity().getId());
-//        assertNotNull(response);
+        verify(clientRepository, times(1)).save(any(ClientEntity.class));
+        assertEquals(response.getId(), ClientFixture.getClientEntity().getId());
+        assertNotNull(response);
     }
 
     @Test
@@ -77,7 +81,8 @@ public class ClientServiceTest {
 
     @Test
     void updateClient_WhenSendUpdateClientWithIdValid_ExpectedClient ()  {
-        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(ClientFixture.getClientEntity()));
+        when(clientRepository.save(any(ClientEntity.class))).thenReturn(ClientFixture.getClientEntity());
         ClientDto response = clientService.update(ClientFixture.getClientEntity().getId(), ClientFixture.getClientFormDto());
 
         assertEquals(ClientFixture.getClientDto().getId(), response.getId());
@@ -94,13 +99,11 @@ public class ClientServiceTest {
 
     @Test
     void deleteClient_WhenSendDeleteClientWithIdValid_ExpectedOk ()  {
-        when(clientRepository.save(ClientFixture.getClientEntity())).thenReturn(ClientFixture.getClientEntity());
-        ClientDto response = clientService.save(ClientFixture.getClientFormDto());
+        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(ClientFixture.getClientEntity()));
+        doNothing().when(clientRepository).deleteById(anyLong());
+        clientService.delete(ClientFixture.getClientEntity().getId());
 
-        doNothing().when(clientRepository).deleteById(response.getId());
-        clientService.delete(response.getId());
-
-        Mockito.verify(clientRepository, times(1)).deleteById(response.getId());
+        verify(clientRepository, times(1)).deleteById(anyLong());
     }
 
     @Test

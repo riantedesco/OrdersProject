@@ -126,7 +126,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"cpf\": \"000.000.000-00\",\r\n    \"name\": \"Rian\",\r\n    \"sex\": \"Masculino\",\r\n    \"birthdate\": \"2002-03-30\",\r\n    \"email\": \"rian@email.com\",\r\n    \"phone\": \"54999082352\"\r\n}",
+									"raw": "{\r\n    \"cpf\": \"000.000.000-00\",\r\n    \"name\": \"Rian Tedesco\",\r\n    \"sex\": \"Masculino\",\r\n    \"birthdate\": \"2002-03-30\",\r\n    \"email\": \"rian@email.com\",\r\n    \"phone\": \"54999082352\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -134,7 +134,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/client/1",
+									"raw": "http://localhost:7071/v1/client/2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -143,7 +143,7 @@
 									"path": [
 										"v1",
 										"client",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -171,7 +171,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/client/1",
+									"raw": "http://localhost:7071/v1/client/2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -180,7 +180,7 @@
 									"path": [
 										"v1",
 										"client",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -306,7 +306,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Celular Xiaomi Redmi Note 7\",\r\n    \"description\": \"Celular da Xiaomi com ótimo custo-benefício em promoção\",\r\n    \"brand\": \"Xiaomi\",\r\n    \"price\": 900.00,\r\n    \"active\": true\r\n}",
+									"raw": "{\r\n    \"name\": \"Celular Xiaomi Redmi Note 9\",\r\n    \"description\": \"Isso é uma descrição\",\r\n    \"brand\": \"Xiaomi\",\r\n    \"price\": 900.00,\r\n    \"active\": true\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -314,7 +314,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/product/1",
+									"raw": "http://localhost:7071/v1/product/2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -323,7 +323,7 @@
 									"path": [
 										"v1",
 										"product",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -351,7 +351,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/product/1",
+									"raw": "http://localhost:7071/v1/product/2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -360,7 +360,7 @@
 									"path": [
 										"v1",
 										"product",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -396,7 +396,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/order/find?id=1&number=123312189&cpfClient=000.000.000-00",
+									"raw": "http://localhost:7071/v1/order/find?id=1&number=171141742&cpfClient=000.000.000-00",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -414,7 +414,7 @@
 										},
 										{
 											"key": "number",
-											"value": "123312189"
+											"value": "171141742"
 										},
 										{
 											"key": "cpfClient",
@@ -432,7 +432,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"number\": 123312189,\r\n    \"idClient\": 1,\r\n    \"productOrders\": [{\r\n        \"quantity\" : 4,\r\n        \"idProduct\" : 1\r\n    },{\r\n        \"quantity\" : 3,\r\n        \"idProduct\" : 2\r\n    }]\r\n}",
+									"raw": "{\r\n    \"number\": 171141742,\r\n    \"idClient\": 1,\r\n    \"productOrders\": [{\r\n        \"quantity\" : 80,\r\n        \"idProduct\" : 1\r\n    },{\r\n        \"quantity\" : 3,\r\n        \"idProduct\" : 2\r\n    }]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -461,7 +461,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"number\": 987654321,\r\n    \"idClient\": 1\r\n}",
+									"raw": "{\r\n    \"number\": 9813123124321,\r\n    \"idClient\": 1\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -469,7 +469,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7071/v1/order/1",
+									"raw": "http://localhost:7071/v1/order/2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -478,7 +478,7 @@
 									"path": [
 										"v1",
 										"order",
-										"1"
+										"2"
 									]
 								}
 							},
@@ -519,7 +519,7 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:7072/v1/payment/find?idOrder=1&cpfClient=000.000.000-00",
+									"raw": "http://localhost:7072/v1/payment/1&000.000.000-00",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -528,17 +528,7 @@
 									"path": [
 										"v1",
 										"payment",
-										"find"
-									],
-									"query": [
-										{
-											"key": "idOrder",
-											"value": "1"
-										},
-										{
-											"key": "cpfClient",
-											"value": "000.000.000-00"
-										}
+										"1&000.000.000-00"
 									]
 								}
 							},

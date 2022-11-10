@@ -4,6 +4,7 @@ import com.compass.msorder.domain.ClientEntity;
 import com.compass.msorder.domain.OrderEntity;
 import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.OrderDto;
+import com.compass.msorder.domain.dto.OrderUpdateDto;
 import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.domain.dto.form.OrderFormDto;
 import com.compass.msorder.domain.dto.form.OrderUpdateFormDto;
@@ -75,9 +76,11 @@ public class OrderServiceImpl implements OrderService {
 				orderDtoResponse.setTotal(order.getTotal());
 				listProductOrder.add(productOrderResponse);
 			}
+
 			orderDtoResponse.setProductOrders(listProductOrder);
 		}
 
+		this.orderRepository.save(order);
 		paymentPublisher.publishPayment(order);
         return orderDtoResponse;
 	}
@@ -92,7 +95,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public OrderDto update(Long id, OrderUpdateFormDto body) {
+	public OrderUpdateDto update(Long id, OrderUpdateFormDto body) {
 		Optional<OrderEntity> order = this.orderRepository.findById(id);
 		if (!order.isPresent()) {
 			throw new NotFoundAttributeException("Order not found");
@@ -106,8 +109,8 @@ public class OrderServiceImpl implements OrderService {
 		order.get().setClient(client.get());
 
 		validation.validateOrder(order.get());
-		OrderEntity o = this.orderRepository.save(order.get());
-		return mapper.map(o, OrderDto.class);
+		OrderEntity orderResponse = this.orderRepository.save(order.get());
+		return mapper.map(orderResponse, OrderUpdateDto.class);
 	}
 
 }

@@ -1,103 +1,91 @@
 package com.compass.msorder.controller;
 
-import com.compass.msorder.domain.ProductEntity;
-import com.compass.msorder.domain.dto.ProductDto;
-import com.compass.msorder.domain.dto.form.ProductFormDto;
 import com.compass.msorder.fixture.ProductFixture;
-import com.compass.msorder.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import com.compass.msorder.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import java.util.List;
+
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.standaloneSetup;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+@WebMvcTest(ProductController.class)
 public class ProductControllerTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private ProductController productController;
 
-    @Autowired
-    private ProductRepository productRepository;
+    @MockBean
+    private ProductService productService;
 
-    ProductEntity product;
-
-    @BeforeAll
+    @BeforeEach
     public void setup() {
-        this.product = new ProductEntity();
-        product.setName("Product test");
-        product.setDescription("Description test");
-        product.setBrand("Brand test");
-        product.setPrice(300.00);
-        product.setActive(true);
+        standaloneSetup(this.productController);
     }
 
     @Test
-    public void saveProduct_WhenSendMethodPost_ExpectedStatusOk() {
+    public void saveProduct_WhenSendMethodPost_ExpectedStatus201() {
+        when(this.productService.save(ProductFixture.getProductFormDto())).thenReturn(ProductFixture.getProductDto());
 
-        ProductFormDto productFormDto = ProductFixture.getProductFormDto();
-
-        HttpEntity<ProductFormDto> httpEntity = new HttpEntity<>(productFormDto);
-
-        ResponseEntity<ProductDto> response = this.testRestTemplate
-                .exchange("/v1/product", HttpMethod.POST, httpEntity, ProductDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Product default");
+        given()
+                .contentType("application/json")
+                .body(ProductFixture.getProductFormDto())
+                .when()
+                .post("/v1/product")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
     }
 
     @Test
-    public void listProducts_WhenSendMethodGet_ExpectedStatusOk() {
+    public void findProduct_WhenSendMethodGetById_ExpectedStatus200k() {
+        when(this.productService.find(ProductFixture.getProductEntity().getId())).thenReturn(ProductFixture.getProductDto());
 
-        ResponseEntity<ProductDto[]> response = this.testRestTemplate
-                .exchange("/v1/product", HttpMethod.GET, null, ProductDto[].class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        given()
+                .when()
+                .get("/v1/product/{id}", ProductFixture.getProductEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void findProduct_WhenSendMethodGetById_ExpectedStatusOk() {
-        ProductEntity product = this.productRepository.save(this.product);
+    public void listProducts_WhenSendMethodGet_ExpectedStatus200() {
+        when(this.productService.list()).thenReturn(List.of(ProductFixture.getProductDto()));
 
-        ResponseEntity<ProductDto> response = this.testRestTemplate
-                .exchange("/v1/product/" + product.getId(), HttpMethod.GET, null, ProductDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Product test");
+        given()
+                .when()
+                .get("/v1/product")
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void updateProduct_WhenSendMethodUpdateById_ExpectedStatusOk() {
+    public void updateProduct_WhenSendMethodUpdateById_ExpectedStatus200() {
+        when(this.productService.update(ProductFixture.getProductEntity().getId(), ProductFixture.getProductFormDto())).thenReturn(ProductFixture.getProductDto());
 
-        ProductEntity product = this.productRepository.save(this.product);
-
-        ProductFormDto productFormDto = ProductFixture.getProductFormDto();
-        productFormDto.setName("Product updated");
-
-        HttpEntity<ProductFormDto> httpEntity = new HttpEntity<>(productFormDto);
-
-        ResponseEntity<ProductDto> response = this.testRestTemplate
-                .exchange("/v1/product/" + product.getId(), HttpMethod.PUT, httpEntity, ProductDto.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Assertions.assertEquals(response.getBody().getName(), "Product updated");
+        given()
+                .contentType("application/json")
+                .body(ProductFixture.getProductFormDto())
+                .when()
+                .put("/v1/product/{id}", ProductFixture.getProductEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatusOk() {
+    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatus200() {
+        doNothing().when(this.productService).delete(ProductFixture.getProductEntity().getId());
 
-        ProductEntity product = this.productRepository.save(this.product);
-
-        ResponseEntity<Void> response = this.testRestTemplate
-                .exchange("/v1/product/" + product.getId(), HttpMethod.DELETE, null, Void.class);
-
-        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
+        given()
+                .when()
+                .delete("/v1/product/{id}", ProductFixture.getProductEntity().getId())
+                .then()
+                .statusCode(HttpStatus.OK.value());
     }
 }
