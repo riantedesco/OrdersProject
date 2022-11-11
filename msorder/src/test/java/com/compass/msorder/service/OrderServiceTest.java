@@ -3,6 +3,7 @@ package com.compass.msorder.service;
 import com.compass.msorder.domain.OrderEntity;
 import com.compass.msorder.domain.dto.OrderDto;
 import com.compass.msorder.domain.dto.OrderUpdateDto;
+import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ClientFixture;
 import com.compass.msorder.fixture.OrderFixture;
@@ -73,8 +74,8 @@ public class OrderServiceTest {
     }
 
     @Test
-    void saveOrder_WhenSendSaveOrderWithInvaliClient_ExpectedNotFoundAttributeException ()  {
-        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> orderService.save(OrderFixture.getOrderFormDtoWithInvalidClient()));
+    void saveOrder_WhenSendSaveOrderWithInvalidClient_ExpectedInvalidAttributeException ()  {
+        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.save(OrderFixture.getOrderFormDtoWithInvalidClient()));
 
         assertNotNull(response);
         assertEquals("Client not found", response.getMessage());
@@ -119,7 +120,7 @@ public class OrderServiceTest {
     @Test
     void updateOrder_WhenSendUpdateOrderWithClientInvalid_ExpectedNotFoundAttributeException ()  {
         when(orderRepository.findById(anyLong())).thenReturn(Optional.of(OrderFixture.getOrderEntity()));
-        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> orderService.update(1L, OrderFixture.getOrderUpdateFormDtoWithInvalidClient()));
+        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.update(1L, OrderFixture.getOrderUpdateFormDtoWithInvalidClient()));
 
         assertNotNull(response);
         assertEquals("Client not found", response.getMessage());

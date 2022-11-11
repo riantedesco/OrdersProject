@@ -26,8 +26,7 @@ public class OrderController {
 	@ApiOperation(value = "Cadastra um pedido")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Retorna o pedido recém cadastrado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição")})
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<OrderDto> save(@RequestBody @Valid OrderFormDto body) {
@@ -47,8 +46,7 @@ public class OrderController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o pedido atualizado"),
 			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 404, message = "Pedido não encontrado"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 404, message = "Pedido não encontrado")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<OrderUpdateDto> update(@PathVariable Long id, @RequestBody @Valid OrderUpdateFormDto body) {

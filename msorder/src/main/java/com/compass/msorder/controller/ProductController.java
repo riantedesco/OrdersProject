@@ -25,8 +25,7 @@ public class ProductController {
 	@ApiOperation(value = "Cadastra um produto")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Retorna o produto recém cadastrado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição")})
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ProductDto> save(@RequestBody @Valid ProductFormDto body) {
@@ -54,8 +53,7 @@ public class ProductController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o produto atualizado"),
 			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 404, message = "Produto não encontrado"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ProductDto> update(@PathVariable Long id, @RequestBody @Valid ProductFormDto body) {

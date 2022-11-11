@@ -8,7 +8,6 @@ import com.compass.mspayment.publisher.order.OrderPublisher;
 import com.compass.mspayment.repository.PaymentRepository;
 import com.compass.mspayment.service.PaymentService;
 import com.compass.mspayment.util.constants.StatusOrderOption;
-import com.compass.mspayment.util.validation.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,9 +26,6 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private ModelMapper mapper;
 
-	@Autowired
-	private Validation validation;
-
 	@Override
 	public void save(PaymentFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
@@ -41,7 +37,6 @@ public class PaymentServiceImpl implements PaymentService {
 			payment.setStatus(StatusOrderOption.PAYMENT_CONFIRMED);
 		}
 
-		validation.validatePayment(payment);
 		this.paymentRepository.save(payment);
 		orderPublisher.publishOrder(payment);
 	}

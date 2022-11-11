@@ -3,6 +3,7 @@ package com.compass.msorder.service;
 import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.exception.InactiveProductException;
+import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ProductFixture;
 import com.compass.msorder.fixture.ProductOrderFixture;
@@ -62,8 +63,8 @@ public class ProductOrderServiceTest {
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveProductOrderWithInvalidProduct_ExpectedNotFoundAttributeException ()  {
-        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInvalidIdProduct(), ProductOrderFixture.getProductOrderEntity().getOrder()));
+    void saveProductOrder_WhenSendSaveProductOrderWithInvalidProduct_ExpectedInvalidAttributeException ()  {
+        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInvalidIdProduct(), ProductOrderFixture.getProductOrderEntity().getOrder()));
 
         assertNotNull(response);
         assertEquals("Product not found", response.getMessage());

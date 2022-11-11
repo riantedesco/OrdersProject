@@ -25,8 +25,7 @@ public class ClientController {
 	@ApiOperation(value = "Cadastra um cliente")
 	@ApiResponses(value = {
 			@ApiResponse(code = 201, message = "Retorna o cliente recém cadastrado"),
-			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição")})
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ClientDto> save(@RequestBody @Valid ClientFormDto body) {
@@ -54,8 +53,7 @@ public class ClientController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Retorna o cliente atualizado"),
 			@ApiResponse(code = 400, message = "Erro na validação dos dados enviados no corpo da requisição"),
-			@ApiResponse(code = 404, message = "Cliente não encontrado"),
-			@ApiResponse(code = 500, message = "Corpo da requisição está incorreto")})
+			@ApiResponse(code = 404, message = "Cliente não encontrado")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
 	public ResponseEntity<ClientDto> update(@PathVariable Long id, @RequestBody @Valid ClientFormDto body) {

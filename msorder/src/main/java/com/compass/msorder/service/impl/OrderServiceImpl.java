@@ -9,6 +9,7 @@ import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.domain.dto.form.OrderFormDto;
 import com.compass.msorder.domain.dto.form.OrderUpdateFormDto;
 import com.compass.msorder.domain.dto.form.ProductOrderFormDto;
+import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.publisher.payment.PaymentPublisher;
 import com.compass.msorder.repository.ClientRepository;
@@ -55,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
 		if (body.getIdClient() != null) {
 			Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
 			if(!client.isPresent()) {
-				throw new NotFoundAttributeException("Client not found");
+				throw new InvalidAttributeException("Client not found");
 			}
 			order.setClient(client.get());
 		}
@@ -104,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
 
 		Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
 		if (!client.isPresent()) {
-			throw new NotFoundAttributeException("Client not found");
+			throw new InvalidAttributeException("Client not found");
 		}
 		order.get().setClient(client.get());
 

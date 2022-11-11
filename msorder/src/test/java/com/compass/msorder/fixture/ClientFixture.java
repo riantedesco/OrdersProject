@@ -103,4 +103,14 @@ public class ClientFixture {
                 .build();
     }
 
+    public static ClientFormDto getClientFormDtoWithInvalidAttribute() {
+        return ClientFormDto.builder()
+                .cpf("000.000.000-0")
+                .name(" ")
+                .sex("Helicóptero")
+                .birthdate(LocalDate.parse("2002-03-30"))
+                .email("default")
+                .phone("(99)99999-999")
+                .build();
+    }
 }

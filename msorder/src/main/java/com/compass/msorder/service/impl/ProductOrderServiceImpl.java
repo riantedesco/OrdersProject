@@ -6,6 +6,7 @@ import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.domain.dto.form.ProductOrderFormDto;
 import com.compass.msorder.exception.InactiveProductException;
+import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.repository.ProductOrderRepository;
 import com.compass.msorder.repository.ProductRepository;
@@ -40,7 +41,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 		if (body.getIdProduct() != null) {
 			Optional<ProductEntity> product = this.productRepository.findById(body.getIdProduct());
 			if (!product.isPresent()) {
-				throw new NotFoundAttributeException("Product not found");
+				throw new InvalidAttributeException("Product not found");
 			}
 			if (!product.get().getActive()) {
 				throw new InactiveProductException("Product inactive");

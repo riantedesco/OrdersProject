@@ -17,16 +17,6 @@ public class PaymentFixture {
                 .build();
     }
 
-    public static PaymentDto getPaymentDto() {
-        return PaymentDto.builder()
-                .id(1L)
-                .idOrder(1L)
-                .cpfClient("000.000.000-00")
-                .price(900.00)
-                .status(StatusOrderOption.ORDER_CREATED)
-                .build();
-    }
-
     public static PaymentFormDto getPaymentFormDtoWithAuthorizedPrice() {
         return PaymentFormDto.builder()
                 .idOrder(1L)
@@ -40,6 +30,16 @@ public class PaymentFixture {
                 .idOrder(1L)
                 .cpfClient("000.000.000-00")
                 .price(1100.00)
+                .build();
+    }
+
+    public static PaymentEntity getPaymentEntityWithAuthorizedPrice() {
+        return PaymentEntity.builder()
+                .id(1L)
+                .idOrder(1L)
+                .cpfClient("000.000.000-00")
+                .price(900.00)
+                .status(StatusOrderOption.PAYMENT_CONFIRMED)
                 .build();
     }
 

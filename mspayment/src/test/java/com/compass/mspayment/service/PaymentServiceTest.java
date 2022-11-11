@@ -7,7 +7,6 @@ import com.compass.mspayment.fixture.PaymentFixture;
 import com.compass.mspayment.publisher.order.OrderPublisher;
 import com.compass.mspayment.repository.PaymentRepository;
 import com.compass.mspayment.service.impl.PaymentServiceImpl;
-import com.compass.mspayment.util.validation.Validation;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,9 +35,6 @@ public class PaymentServiceTest {
 
     @Spy
     private ModelMapper mapper;
-
-    @Mock
-    private Validation validation;
 
     @InjectMocks
     private PaymentServiceImpl paymentService;
