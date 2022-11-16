@@ -10,12 +10,14 @@
 
 > O mspayment possui apenas a entidade payment. O fluxo principal de payment se dá pelo POST, que é acionado automaticamente quando o serviço consome uma order criada no msorder.
 
+> Ambos os microsserviços possuem testes unitários e integrados.
+
 > A comunicação é feita pelo RabbitMQ: http://localhost:15672/#/
   > Username: guest, password: guest
 
-> Ambos os projetos utilizam o banco H2 para o armazenamento dos dados.
-  > Para acessar h2 do msorder: http://localhost:7071/h2-console (jdbc:h2:mem:msorder)
-  > Para acessar h2 do mspayment: http://localhost:7072/h2-console (jdbc:h2:mem:mspayment)
+> Ambos os projetos utilizam o banco Postgres para o armazenamento dos dados.
+  > user: postgres
+  > password: masterkey
 
 > O envio de payloads e os testes manuais são feitos via Postman, cujo arquivo de collections está na raíz do projeto.
 
