@@ -27,14 +27,36 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(false)
-                .globalResponseMessage(RequestMethod.GET, responseMessageGetAndDelete())
-                .globalResponseMessage(RequestMethod.POST, responseMessagePostAndPut())
-                .globalResponseMessage(RequestMethod.PUT, responseMessagePostAndPut())
-                .globalResponseMessage(RequestMethod.DELETE, responseMessageGetAndDelete())
+                .globalResponseMessage(RequestMethod.GET, responseMessageGet())
+                .globalResponseMessage(RequestMethod.POST, responseMessagePost())
+                .globalResponseMessage(RequestMethod.PUT, responseMessagePut())
+                .globalResponseMessage(RequestMethod.DELETE, responseMessageDelete())
                 .apiInfo(apiInfo());
     }
 
-    private List<ResponseMessage> responseMessageGetAndDelete() {
+    private List<ResponseMessage> responseMessageGet() {
+        return new ArrayList<ResponseMessage>() {
+            {
+                add(new ResponseMessageBuilder()
+                        .code(404)
+                        .message("Not found")
+                        .build());
+            }
+        };
+    }
+
+    private List<ResponseMessage> responseMessageDelete() {
+        return new ArrayList<ResponseMessage>() {
+            {
+                add(new ResponseMessageBuilder()
+                        .code(404)
+                        .message("Not found")
+                        .build());
+            }
+        };
+    }
+
+    private List<ResponseMessage> responseMessagePost() {
         return new ArrayList<ResponseMessage>() {
             {
                 add(new ResponseMessageBuilder()
@@ -45,7 +67,7 @@ public class SwaggerConfig {
         };
     }
 
-    private List<ResponseMessage> responseMessagePostAndPut() {
+    private List<ResponseMessage> responseMessagePut() {
         return new ArrayList<ResponseMessage>() {
             {
                 add(new ResponseMessageBuilder()
@@ -53,8 +75,8 @@ public class SwaggerConfig {
                         .message("Bad request")
                         .build());
                 add(new ResponseMessageBuilder()
-                        .code(500)
-                        .message("Campo nulo informado")
+                        .code(404)
+                        .message("Not found")
                         .build());
             }
         };

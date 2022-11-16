@@ -17,7 +17,7 @@ public class OrderFixture {
 
         return OrderFormDto.builder()
                 .number(1111L)
-                .idClient(1L)
+                .idClient(ClientFixture.getClientEntity().getId())
                 .productOrders(productOrderFormDtos)
                 .build();
     }
@@ -44,7 +44,7 @@ public class OrderFixture {
     public static OrderUpdateFormDto getOrderUpdateFormDto() {
         return OrderUpdateFormDto.builder()
                 .number(5555L)
-                .idClient(1L)
+                .idClient(ClientFixture.getClientEntity().getId())
                 .build();
     }
 
