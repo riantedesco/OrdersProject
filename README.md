@@ -25,5 +25,8 @@
   > Swagger do msorder: http://localhost:7071/swagger-ui.html
   > Swagger do mspayment: http://localhost:7072/swagger-ui.html
 
-> Link do vídeo de apresentação:
+> Link do vídeo de apresentação (ANTIGO):
 https://www.loom.com/embed/a432993702114ec3b2fc254a8240321b
+
+> Link do vídeo de apresentação (ATUALIZADO):
+https://www.loom.com/embed/0d99125988744d2594fd9c03b425edb2
