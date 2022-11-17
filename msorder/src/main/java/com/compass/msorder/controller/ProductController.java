@@ -62,13 +62,13 @@ public class ProductController {
 
 	@ApiOperation(value = "Remove um produto pelo id")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Produto deletado"),
+			@ApiResponse(code = 204, message = "Produto deletado"),
 			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@DeleteMapping(value = "/{id}")
 	@Transactional
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		this.productService.delete(id);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.noContent().build();
 	}
 
 }

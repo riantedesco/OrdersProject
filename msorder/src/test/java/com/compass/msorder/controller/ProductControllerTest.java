@@ -120,14 +120,14 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatus200() {
+    public void deleteProduct_WhenSendMethodDeleteById_ExpectedStatus204() {
         ProductDto productSaved = productService.save(ProductFixture.getProductFormDto());
 
         given()
                 .when()
                 .delete("/v1/product/{id}", productSaved.getId())
                 .then()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     @Test

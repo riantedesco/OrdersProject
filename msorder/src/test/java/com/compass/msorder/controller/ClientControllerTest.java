@@ -120,14 +120,14 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void deleteClient_WhenSendMethodDeleteById_ExpectedStatus200() {
+    public void deleteClient_WhenSendMethodDeleteById_ExpectedStatus204() {
         ClientDto clientSaved = clientService.save(ClientFixture.getClientFormDto());
 
         given()
                 .when()
                 .delete("/v1/client/{id}", clientSaved.getId())
                 .then()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
     @Test
