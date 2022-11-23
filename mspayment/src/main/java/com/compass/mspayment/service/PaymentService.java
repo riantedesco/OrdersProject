@@ -7,6 +7,6 @@ public interface PaymentService {
 
     void save(PaymentFormDto body);
 
-    PaymentDto findByIdOrderAndCpfClient(Long idOrder, String cpfClient);
+    PaymentDto findByIdOrderAndCpfCustomer(Long idOrder, String cpfCustomer);
 
 }

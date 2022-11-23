@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
-    @Query("SELECT o FROM OrderEntity o WHERE o.id = :id AND o.number = :number AND o.client.cpf = :cpfClient")
-    Optional<OrderEntity> findByIdNumberAndCpfClient(Long id, Long number, String cpfClient);
+    @Query("SELECT o FROM OrderEntity o WHERE o.id = :id AND o.number = :number AND o.customer.cpf = :cpfCustomer")
+    Optional<OrderEntity> findByIdNumberAndCpfCustomer(Long id, Long number, String cpfCustomer);
 
 }

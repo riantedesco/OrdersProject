@@ -1,5 +1,6 @@
 package com.compass.mspayment.domain.dto.form;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentFormDto {
 
+    @ApiModelProperty(value = "Id do pedido")
     private Long idOrder;
 
-    private String cpfClient;
+    @ApiModelProperty(value = "Cpf do cliente")
+    private String cpfCustomer;
 
-    private Double price;
+    @ApiModelProperty(value = "Valor total do pedido")
+    private Double totalOrder;
 
 }

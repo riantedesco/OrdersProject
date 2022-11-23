@@ -32,84 +32,78 @@ public class OrderControllerTest {
     }
 
     @Test
-    public void saveOrder_WhenSendMethodPost_ExpectedStatus201() {
+    public void save_WhenSendSaveWithValidBody_ExpectedStatus201() {
         given()
                 .contentType("application/json")
                 .body(OrderFixture.getOrderFormDto())
                 .when()
-                .post("/v1/order")
+                .post("/v1/orders")
                 .then()
                 .statusCode(HttpStatus.CREATED.value());
     }
 
     @Test
-    public void saveOrder_WhenSendMethodPost_ExpectedStatus400() {
+    public void save_WhenSendSaveWithInvalidBody_ExpectedStatus400() {
         given()
                 .contentType("application/json")
                 .body(OrderFixture.getOrderFormDtoWithInvalidAttribute())
                 .when()
-                .post("/v1/order")
+                .post("/v1/orders")
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
-    public void findOrder_WhenSendMethodGetByIdAndNumberAndCpfClient_ExpectedStatus200() {
+    public void findByIdNumberAndCpfClient_WhenSendFindByIdNumberAndCpfClientWithExistingIdNumberAndCpfClient_ExpectedStatus200() {
         OrderDto orderSaved = orderService.save(OrderFixture.getOrderFormDto());
 
         given()
-                .param("id", orderSaved.getId())
-                .param("number", orderSaved.getNumber())
-                .param("cpfClient", orderSaved.getClient().getCpf())
                 .when()
-                .get("/v1/order/find").then()
+                .get("/v1/orders/id={id}&number={number}&cpfClient={cpfClient}", orderSaved.getId(), orderSaved.getNumber(), orderSaved.getCustomer().getCpf()).then()
                 .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void findOrder_WhenSendMethodGetByIdAndNumberAndCpfClient_ExpectedStatus404() {
+    public void findByIdNumberAndCpfClient_WhenSendFindByIdNumberAndCpfClientWithNonExistingIdNumberOrCpfClient_ExpectedStatus404() {
         given()
-                .param("id", 5000L)
-                .param("number", OrderFixture.getOrderEntity().getNumber())
-                .param("cpfClient", OrderFixture.getOrderEntity().getClient().getCpf())
                 .when()
-                .get("/v1/order/find").then()
+                .get("/v1/orders/id={id}&number={number}&cpfClient={cpfClient}", 5000L, OrderFixture.getOrderEntity().getNumber(), OrderFixture.getOrderEntity().getCustomer().getCpf()).then()
                 .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
-    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatus200() {
+    public void update_WhenSendUpdateWithExistingIdAndValidBody_ExpectedStatus200() {
         OrderDto orderSaved = orderService.save(OrderFixture.getOrderFormDto());
 
         given()
                 .contentType("application/json")
                 .body(OrderFixture.getOrderUpdateFormDto())
                 .when()
-                .put("/v1/order/{id}", orderSaved.getId())
+                .put("/v1/orders/{id}", orderSaved.getId())
                 .then()
                 .statusCode(HttpStatus.OK.value());
     }
 
     @Test
-    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatus400() {
+    public void update_WhenSendUpdateWithInvalidBody_ExpectedStatus400() {
         OrderDto orderSaved = orderService.save(OrderFixture.getOrderFormDto());
 
         given()
                 .contentType("application/json")
-                .body(OrderFixture.getOrderFormDtoWithInvalidClient())
+                .body(OrderFixture.getOrderFormDtoWithInvalidCustomer())
                 .when()
-                .put("/v1/order/{id}", orderSaved.getId())
+                .put("/v1/orders/{id}", orderSaved.getId())
                 .then()
                 .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
-    public void updateOrder_WhenSendMethodUpdateById_ExpectedStatus404() {
+    public void update_WhenSendUpdateWithNonExistingId_ExpectedStatus404() {
         given()
                 .contentType("application/json")
                 .body(OrderFixture.getOrderFormDto())
                 .when()
-                .put("/v1/order/{id}", 5000L)
+                .put("/v1/orders/{id}", 5000L)
                 .then()
                 .statusCode(HttpStatus.NOT_FOUND.value());
     }

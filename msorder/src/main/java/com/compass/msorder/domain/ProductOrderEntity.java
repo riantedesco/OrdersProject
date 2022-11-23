@@ -19,18 +19,14 @@ public class ProductOrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private Integer quantity;
 
-    @NotNull
     private Double total = 0.00;
 
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id")
     private ProductEntity product;
 
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id")
     private OrderEntity order;

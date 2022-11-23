@@ -31,10 +31,10 @@ public class PaymentServiceImpl implements PaymentService {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		PaymentEntity payment = mapper.map(body, PaymentEntity.class);
 
-		if (body.getPrice() >= 1000.00) {
-			payment.setStatus(StatusOrderOption.PAYMENT_UNAUTHORIZED);
+		if (body.getTotalOrder() >= 1000.00) {
+			payment.setStatusOrder(StatusOrderOption.PAYMENT_UNAUTHORIZED);
 		} else {
-			payment.setStatus(StatusOrderOption.PAYMENT_CONFIRMED);
+			payment.setStatusOrder(StatusOrderOption.PAYMENT_CONFIRMED);
 		}
 
 		this.paymentRepository.save(payment);
@@ -42,8 +42,8 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	public PaymentDto findByIdOrderAndCpfClient(Long idOrder, String cpfClient) {
-		Optional<PaymentEntity> payment = this.paymentRepository.findByIdOrderAndCpfClient(idOrder, cpfClient);
+	public PaymentDto findByIdOrderAndCpfCustomer(Long idOrder, String cpfCustomer) {
+		Optional<PaymentEntity> payment = this.paymentRepository.findByIdOrderAndCpfCustomer(idOrder, cpfCustomer);
 		if (!payment.isPresent()) {
 			throw new NotFoundAttributeException("Payment not found");
 		}

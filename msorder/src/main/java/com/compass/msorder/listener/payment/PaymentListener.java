@@ -22,7 +22,7 @@ public class PaymentListener {
     public void listenPayment(PaymentListenerDto paymentListenerDto) {
         log.info("PaymentListener.listen - {}", paymentListenerDto);
         Optional<OrderEntity> order = this.orderRepository.findById(paymentListenerDto.getIdOrder());
-        order.get().setStatus(paymentListenerDto.getStatus());
+        order.get().setStatus(paymentListenerDto.getStatusOrder());
         this.orderRepository.save(order.get());
     }
 }

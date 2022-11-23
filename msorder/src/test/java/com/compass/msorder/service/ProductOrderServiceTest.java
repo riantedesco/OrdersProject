@@ -4,7 +4,6 @@ import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.ProductOrderDto;
 import com.compass.msorder.exception.InactiveProductException;
 import com.compass.msorder.exception.InvalidAttributeException;
-import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.fixture.ProductFixture;
 import com.compass.msorder.fixture.ProductOrderFixture;
 import com.compass.msorder.repository.ProductOrderRepository;
@@ -52,7 +51,7 @@ public class ProductOrderServiceTest {
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveProductOrderValid_ExpectedProductOrder ()  {
+    void save_WhenSendSaveWithValidProductAndProductActiveEqualsTrue_ExpectedProductOrder ()  {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
         when(productOrderRepository.save(any(ProductOrderEntity.class))).thenReturn(ProductOrderFixture.getProductOrderEntity());
         ProductOrderDto response = productOrderService.save(ProductOrderFixture.getProductOrderFormDto(), ProductOrderFixture.getProductOrderEntity().getOrder());
@@ -63,7 +62,7 @@ public class ProductOrderServiceTest {
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveProductOrderWithInvalidProduct_ExpectedInvalidAttributeException ()  {
+    void save_WhenSendSaveWithInvalidProduct_ExpectedInvalidAttributeException ()  {
         InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInvalidIdProduct(), ProductOrderFixture.getProductOrderEntity().getOrder()));
 
         assertNotNull(response);
@@ -71,12 +70,12 @@ public class ProductOrderServiceTest {
     }
 
     @Test
-    void saveProductOrder_WhenSendSaveProductOrderWithInactiveProduct_ExpectedInactiveProductException ()  {
+    void save_WhenSendSaveWithProductActiveEqualsFalse_ExpectedInactiveProductException ()  {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntityWithInactiveProduct()));
         InactiveProductException response = assertThrows(InactiveProductException.class, () -> productOrderService.save(ProductOrderFixture.getProductOrderFormWithInactiveProduct(), ProductOrderFixture.getProductOrderEntity().getOrder()));
 
         assertNotNull(response);
-        assertEquals("Product inactive", response.getMessage());
+        assertEquals("Inactive product", response.getMessage());
     }
 
 }

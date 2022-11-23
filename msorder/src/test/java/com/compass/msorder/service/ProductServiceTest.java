@@ -46,7 +46,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void saveProduct_WhenSendSaveProductValid_ExpectedProduct ()  {
+    void save_WhenSendSave_ExpectedProduct ()  {
         when(productRepository.save(any(ProductEntity.class))).thenReturn(ProductFixture.getProductEntity());
         ProductDto response = productService.save(ProductFixture.getProductFormDto());
 
@@ -56,7 +56,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void listProduct_WhenSendListProducts_ExpectedProducts ()  {
+    void list_WhenSendList_ExpectedProducts ()  {
         when(productRepository.findAll()).thenReturn(List.of(ProductFixture.getProductEntity()));
         List<ProductDto> response = productService.list();
 
@@ -64,7 +64,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void findProduct_WhenSendFindProductWithIdValid_ExpectedProduct ()  {
+    void find_WhenSendFindWithExistingId_ExpectedProduct ()  {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
         ProductDto response = productService.find(ProductFixture.getProductEntity().getId());
 
@@ -72,7 +72,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void findProduct_WhenSendFindProductWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+    void find_WhenSendFindWithNonExistingId_ExpectedNotFoundAttributeException ()  {
         NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> productService.find(1L));
 
         assertNotNull(response);
@@ -80,7 +80,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void updateProduct_WhenSendUpdateProductWithIdValid_ExpectedProduct ()  {
+    void update_WhenSendUpdateWithExistingId_ExpectedProduct ()  {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
         when(productRepository.save(any(ProductEntity.class))).thenReturn(ProductFixture.getProductEntity());
         ProductDto response = productService.update(ProductFixture.getProductEntity().getId(), ProductFixture.getProductFormDto());
@@ -90,7 +90,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void updateProduct_WhenSendUpdateProductWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+    void update_WhenSendUpdateWithNonExistingId_ExpectedNotFoundAttributeException ()  {
         NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> productService.update(1L, ProductFixture.getProductFormDto()));
 
         assertNotNull(response);
@@ -98,7 +98,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void deleteProduct_WhenSendDeleteProductWithIdValid_ExpectedOk ()  {
+    void delete_WhenSendDeleteWithExistingId_ExpectedOk ()  {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(ProductFixture.getProductEntity()));
         doNothing().when(productRepository).deleteById(anyLong());
         productService.delete(ProductFixture.getProductEntity().getId());
@@ -107,7 +107,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void deleteProduct_WhenSendDeleteProductWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+    void delete_WhenSendDeleteWithNonExistingId_ExpectedNotFoundAttributeException ()  {
         NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> productService.delete(1L));
 
         assertNotNull(response);

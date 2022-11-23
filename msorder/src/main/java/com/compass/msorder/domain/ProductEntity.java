@@ -22,19 +22,14 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private String description;
 
-    @NotNull
     private String brand;
 
-    @NotNull
     private Double price = 0.00;
 
-    @NotNull
     private Boolean active = true;
 
 }

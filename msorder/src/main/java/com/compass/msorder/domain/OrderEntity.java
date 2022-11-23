@@ -21,21 +21,16 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private Long number;
 
-    @NotNull
     private LocalDateTime dateTime;
 
-    @NotNull
     private Double total = 0.00;
 
-    @NotNull
     private StatusOrderOption status;
 
-    @NotNull
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id")
-    private ClientEntity client;
+    private CustomerEntity customer;
 
 }

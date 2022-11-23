@@ -16,7 +16,7 @@ public class PaymentPublisher {
     private RabbitTemplate rabbitTemplate;
 
     public void publishPayment(OrderEntity order) {
-        PaymentPublisherDto paymentPublisherDto = new PaymentPublisherDto(order.getId(), order.getClient().getCpf(), order.getTotal(), order.getStatus());
+        PaymentPublisherDto paymentPublisherDto = new PaymentPublisherDto(order.getId(), order.getCustomer().getCpf(), order.getTotal(), order.getStatus());
         rabbitTemplate.convertAndSend(RabbitMQConstants.EXCHANGE_NAME, RabbitMQConstants.ORDER_NOTIFICATION_ROUTINGKEY_NAME, paymentPublisherDto);
         log.info("PaymentPublisher.publish - {}", order);
     }

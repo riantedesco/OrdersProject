@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
-    @Query("SELECT p FROM PaymentEntity p WHERE p.idOrder = :idOrder AND p.cpfClient = :cpfClient")
-    Optional<PaymentEntity> findByIdOrderAndCpfClient(Long idOrder, String cpfClient);
+    @Query("SELECT p FROM PaymentEntity p WHERE p.idOrder = :idOrder AND p.cpfCustomer = :cpfCustomer")
+    Optional<PaymentEntity> findByIdOrderAndCpfCustomer(Long idOrder, String cpfCustomer);
 
 }

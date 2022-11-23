@@ -17,7 +17,7 @@ public class OrderFixture {
 
         return OrderFormDto.builder()
                 .number(1111L)
-                .idClient(ClientFixture.getClientEntity().getId())
+                .idCustomer(CustomerFixture.getCustomerEntity().getId())
                 .productOrders(productOrderFormDtos)
                 .build();
     }
@@ -28,7 +28,7 @@ public class OrderFixture {
         return OrderDto.builder()
                 .id(1L)
                 .number(1111L)
-                .client(ClientFixture.getClientDto())
+                .customer(CustomerFixture.getCustomerDto())
                 .productOrders(productOrderDtos)
                 .build();
     }
@@ -37,31 +37,31 @@ public class OrderFixture {
         return OrderEntity.builder()
                 .id(1L)
                 .number(1111L)
-                .client(ClientFixture.getClientEntity())
+                .customer(CustomerFixture.getCustomerEntity())
                 .build();
     }
 
     public static OrderUpdateFormDto getOrderUpdateFormDto() {
         return OrderUpdateFormDto.builder()
                 .number(5555L)
-                .idClient(ClientFixture.getClientEntity().getId())
+                .idCustomer(CustomerFixture.getCustomerEntity().getId())
                 .build();
     }
 
-    public static OrderFormDto getOrderFormDtoWithInvalidClient() {
+    public static OrderFormDto getOrderFormDtoWithInvalidCustomer() {
         List<ProductOrderFormDto> productOrderFormDtos = List.of(ProductOrderFixture.getProductOrderFormDto());
 
         return OrderFormDto.builder()
                 .number(1111L)
-                .idClient(5000L)
+                .idCustomer(5000L)
                 .productOrders(productOrderFormDtos)
                 .build();
     }
 
-    public static OrderUpdateFormDto getOrderUpdateFormDtoWithInvalidClient() {
+    public static OrderUpdateFormDto getOrderUpdateFormDtoWithInvalidCustomer() {
         return OrderUpdateFormDto.builder()
                 .number(5555L)
-                .idClient(5000L)
+                .idCustomer(5000L)
                 .build();
     }
 
@@ -69,7 +69,7 @@ public class OrderFixture {
         return OrderUpdateDto.builder()
                 .id(1L)
                 .number(1111L)
-                .client(ClientFixture.getClientDto())
+                .customer(CustomerFixture.getCustomerDto())
                 .build();
     }
 
@@ -78,7 +78,7 @@ public class OrderFixture {
 
         return OrderFormDto.builder()
                 .number(1111L)
-                .idClient(5000L)
+                .idCustomer(5000L)
                 .productOrders(productOrderFormDtos)
                 .build();
     }

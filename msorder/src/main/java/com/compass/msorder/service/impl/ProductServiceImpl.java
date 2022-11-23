@@ -31,9 +31,9 @@ public class ProductServiceImpl implements ProductService {
 	public ProductDto save(ProductFormDto body) {
 		mapper.getConfiguration().setAmbiguityIgnored(true);
 		ProductEntity product = mapper.map(body, ProductEntity.class);
-		validation.validateProduct(product);
-		ProductEntity productResponse = this.productRepository.save(product);
-		return mapper.map(productResponse, ProductDto.class);
+		validation.validateSaveProduct(product);
+		ProductEntity response = this.productRepository.save(product);
+		return mapper.map(response, ProductDto.class);
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class ProductServiceImpl implements ProductService {
 		product.get().setPrice(body.getPrice());
 		product.get().setActive(body.getActive());
 
-		validation.validateProduct(product.get());
-		ProductEntity productResponse = this.productRepository.save(product.get());
-		return mapper.map(productResponse, ProductDto.class);
+		validation.validateUpdateProduct(product.get());
+		ProductEntity response = this.productRepository.save(product.get());
+		return mapper.map(response, ProductDto.class);
 	}
 
 	@Override

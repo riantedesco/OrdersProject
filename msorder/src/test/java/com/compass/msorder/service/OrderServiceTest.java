@@ -5,11 +5,11 @@ import com.compass.msorder.domain.dto.OrderDto;
 import com.compass.msorder.domain.dto.OrderUpdateDto;
 import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
-import com.compass.msorder.fixture.ClientFixture;
+import com.compass.msorder.fixture.CustomerFixture;
 import com.compass.msorder.fixture.OrderFixture;
 import com.compass.msorder.fixture.ProductOrderFixture;
 import com.compass.msorder.publisher.payment.PaymentPublisher;
-import com.compass.msorder.repository.ClientRepository;
+import com.compass.msorder.repository.CustomerRepository;
 import com.compass.msorder.repository.OrderRepository;
 import com.compass.msorder.service.impl.OrderServiceImpl;
 import com.compass.msorder.service.impl.ProductOrderServiceImpl;
@@ -45,7 +45,7 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private ClientRepository clientRepository;
+    private CustomerRepository customerRepository;
 
     @Spy
     private ModelMapper mapper;
@@ -62,8 +62,8 @@ public class OrderServiceTest {
     }
 
     @Test
-    void saveOrder_WhenSendSaveOrderValid_ExpectedOrder ()  {
-        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(ClientFixture.getClientEntity()));
+    void save_WhenSendSaveWithValidCustomer_ExpectedOrder ()  {
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(CustomerFixture.getCustomerEntity()));
         when(productOrderService.save(ProductOrderFixture.getProductOrderFormDto(), OrderFixture.getOrderEntity())).thenReturn(ProductOrderFixture.getProductOrderDto());
         when(orderRepository.save(any(OrderEntity.class))).thenReturn(OrderFixture.getOrderEntity());
         OrderDto response = orderService.save(OrderFixture.getOrderFormDto());
@@ -74,24 +74,24 @@ public class OrderServiceTest {
     }
 
     @Test
-    void saveOrder_WhenSendSaveOrderWithInvalidClient_ExpectedInvalidAttributeException ()  {
-        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.save(OrderFixture.getOrderFormDtoWithInvalidClient()));
+    void save_WhenSendSaveWithInvalidCustomer_ExpectedInvalidAttributeException ()  {
+        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.save(OrderFixture.getOrderFormDtoWithInvalidCustomer()));
 
         assertNotNull(response);
-        assertEquals("Client not found", response.getMessage());
+        assertEquals("Customer not found", response.getMessage());
     }
 
     @Test
-    void findOrder_WhenSendFindOrderWithIdOrNumberOrCpfClientValid_ExpectedOrder ()  {
-        when(orderRepository.findByIdNumberAndCpfClient(anyLong(), anyLong(), anyString())).thenReturn(Optional.of(OrderFixture.getOrderEntity()));
-        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(OrderFixture.getOrderEntity().getClient()));
-        OrderDto response = orderService.findByIdNumberAndCpfClient(OrderFixture.getOrderEntity().getId(), OrderFixture.getOrderEntity().getNumber(), OrderFixture.getOrderEntity().getClient().getCpf());
+    void findByIdNumberAndCpfClient_WhenSendFindByIdNumberAndCpfClientWithExistingIdNumberAndCpfClient_ExpectedOrder ()  {
+        when(orderRepository.findByIdNumberAndCpfCustomer(anyLong(), anyLong(), anyString())).thenReturn(Optional.of(OrderFixture.getOrderEntity()));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(OrderFixture.getOrderEntity().getCustomer()));
+        OrderDto response = orderService.findByIdNumberAndCpfClient(OrderFixture.getOrderEntity().getId(), OrderFixture.getOrderEntity().getNumber(), OrderFixture.getOrderEntity().getCustomer().getCpf());
 
         assertNotNull(response);
     }
 
     @Test
-    void findOrder_WhenSendFindOrderWithIdOrNumberOrCpfClientInvalid_ExpectedNotFoundAttributeException ()  {
+    void findByIdNumberAndCpfClient_WhenSendFindByIdNumberAndCpfClientWithNonExistingIdNumberOrCpfClient_ExpectedNotFoundAttributeException ()  {
         NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> orderService.findByIdNumberAndCpfClient(1L, 999999L, "999.999.999-99"));
 
         assertNotNull(response);
@@ -99,9 +99,9 @@ public class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_WhenSendUpdateOrderWithIdValid_ExpectedOrder ()  {
+    void update_WhenSendUpdateWithExistingIdAndValidCustomer_ExpectedOrder ()  {
         when(orderRepository.findById(anyLong())).thenReturn(Optional.of(OrderFixture.getOrderEntity()));
-        when(clientRepository.findById(anyLong())).thenReturn(Optional.of(ClientFixture.getClientEntity()));
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.of(CustomerFixture.getCustomerEntity()));
         when(orderRepository.save(any(OrderEntity.class))).thenReturn(OrderFixture.getOrderEntity());
         OrderUpdateDto response = orderService.update(OrderFixture.getOrderUpdateDto().getId(), OrderFixture.getOrderUpdateFormDto());
 
@@ -110,7 +110,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_WhenSendUpdateOrderWithIdInvalid_ExpectedNotFoundAttributeException ()  {
+    void update_WhenSendUpdateWithNonExistingId_ExpectedNotFoundAttributeException ()  {
         NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> orderService.update(1L, OrderFixture.getOrderUpdateFormDto()));
 
         assertNotNull(response);
@@ -118,11 +118,11 @@ public class OrderServiceTest {
     }
 
     @Test
-    void updateOrder_WhenSendUpdateOrderWithClientInvalid_ExpectedNotFoundAttributeException ()  {
+    void update_WhenSendUpdateWithInvalidCustomer_ExpectedInvalidAttributeException ()  {
         when(orderRepository.findById(anyLong())).thenReturn(Optional.of(OrderFixture.getOrderEntity()));
-        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.update(1L, OrderFixture.getOrderUpdateFormDtoWithInvalidClient()));
+        InvalidAttributeException response = assertThrows(InvalidAttributeException.class, () -> orderService.update(1L, OrderFixture.getOrderUpdateFormDtoWithInvalidCustomer()));
 
         assertNotNull(response);
-        assertEquals("Client not found", response.getMessage());
+        assertEquals("Customer not found", response.getMessage());
     }
 }

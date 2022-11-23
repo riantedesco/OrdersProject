@@ -3,9 +3,7 @@ package com.compass.msorder.controller;
 import com.compass.msorder.domain.dto.ProductDto;
 import com.compass.msorder.domain.dto.form.ProductFormDto;
 import com.compass.msorder.service.ProductService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,8 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/product")
+@RequestMapping("/v1/products")
+@Api(value = "Operações do produto")
 public class ProductController {
 
 	@Autowired
@@ -45,7 +44,7 @@ public class ProductController {
 			@ApiResponse(code = 200, message = "Retorna o produto encontrado"),
 			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@GetMapping(value = "/{id}", produces = "application/json")
-	public ResponseEntity<ProductDto> find(@PathVariable Long id) {
+	public ResponseEntity<ProductDto> find(@ApiParam(value = "Id do produto", required = true, example = "1") @PathVariable Long id) {
 		return ResponseEntity.ok(this.productService.find(id));
 	}
 
@@ -56,7 +55,7 @@ public class ProductController {
 			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
 	@Transactional
-	public ResponseEntity<ProductDto> update(@PathVariable Long id, @RequestBody @Valid ProductFormDto body) {
+	public ResponseEntity<ProductDto> update(@ApiParam(value = "Id do produto", required = true, example = "1") @PathVariable Long id, @RequestBody @Valid ProductFormDto body) {
 		return ResponseEntity.ok(this.productService.update(id, body));
 	}
 
@@ -66,7 +65,7 @@ public class ProductController {
 			@ApiResponse(code = 404, message = "Produto não encontrado")})
 	@DeleteMapping(value = "/{id}")
 	@Transactional
-	public ResponseEntity<?> delete(@PathVariable Long id) {
+	public ResponseEntity<?> delete(@ApiParam(value = "Id do produto", required = true, example = "1") @PathVariable Long id) {
 		this.productService.delete(id);
 		return ResponseEntity.noContent().build();
 	}

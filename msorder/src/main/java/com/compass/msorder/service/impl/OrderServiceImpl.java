@@ -1,6 +1,6 @@
 package com.compass.msorder.service.impl;
 
-import com.compass.msorder.domain.ClientEntity;
+import com.compass.msorder.domain.CustomerEntity;
 import com.compass.msorder.domain.OrderEntity;
 import com.compass.msorder.domain.ProductOrderEntity;
 import com.compass.msorder.domain.dto.OrderDto;
@@ -12,7 +12,7 @@ import com.compass.msorder.domain.dto.form.ProductOrderFormDto;
 import com.compass.msorder.exception.InvalidAttributeException;
 import com.compass.msorder.exception.NotFoundAttributeException;
 import com.compass.msorder.publisher.payment.PaymentPublisher;
-import com.compass.msorder.repository.ClientRepository;
+import com.compass.msorder.repository.CustomerRepository;
 import com.compass.msorder.repository.OrderRepository;
 import com.compass.msorder.service.OrderService;
 import com.compass.msorder.service.ProductOrderService;
@@ -39,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private ClientRepository clientRepository;
+	private CustomerRepository customerRepository;
 
 	@Autowired
 	private ModelMapper mapper;
@@ -53,31 +53,27 @@ public class OrderServiceImpl implements OrderService {
 		OrderEntity order = mapper.map(body, OrderEntity.class);
 		order.setId(null);
 
-		if (body.getIdClient() != null) {
-			Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
-			if(!client.isPresent()) {
-				throw new InvalidAttributeException("Client not found");
-			}
-			order.setClient(client.get());
+		Optional<CustomerEntity> customer = this.customerRepository.findById(body.getIdCustomer());
+		if(!customer.isPresent()) {
+			throw new InvalidAttributeException("Customer not found");
 		}
+		order.setCustomer(customer.get());
 
 		order.setStatus(StatusOrderOption.ORDER_CREATED);
-		validation.validateOrder(order);
-		OrderEntity orderResponse = this.orderRepository.save(order);
-		OrderDto orderDtoResponse = mapper.map(orderResponse, OrderDto.class);
+		validation.validateSaveOrder(order);
+		OrderEntity response = this.orderRepository.save(order);
+		OrderDto orderDtoResponse = mapper.map(response, OrderDto.class);
 
 		if (!body.getProductOrders().isEmpty()) {
 			List<ProductOrderFormDto> listProductOrderForm = body.getProductOrders();
 			List<ProductOrderDto> listProductOrder = new ArrayList<>();
-
 			for(ProductOrderFormDto productOrderFormDto : listProductOrderForm) {
 				mapper.map(productOrderFormDto, ProductOrderEntity.class);
-				ProductOrderDto productOrderResponse = this.productOrderService.save(productOrderFormDto, orderResponse);
+				ProductOrderDto productOrderResponse = this.productOrderService.save(productOrderFormDto, response);
 				order.setTotal(order.getTotal() + productOrderResponse.getTotal());
 				orderDtoResponse.setTotal(order.getTotal());
 				listProductOrder.add(productOrderResponse);
 			}
-
 			orderDtoResponse.setProductOrders(listProductOrder);
 		}
 
@@ -88,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public OrderDto findByIdNumberAndCpfClient(Long id, Long number, String cpfClient) {
-		Optional<OrderEntity> order = this.orderRepository.findByIdNumberAndCpfClient(id, number, cpfClient);
+		Optional<OrderEntity> order = this.orderRepository.findByIdNumberAndCpfCustomer(id, number, cpfClient);
 		if (!order.isPresent()) {
 			throw new NotFoundAttributeException("Order not found");
 		}
@@ -103,15 +99,15 @@ public class OrderServiceImpl implements OrderService {
 		}
 		order.get().setNumber(body.getNumber());
 
-		Optional<ClientEntity> client = this.clientRepository.findById(body.getIdClient());
-		if (!client.isPresent()) {
-			throw new InvalidAttributeException("Client not found");
+		Optional<CustomerEntity> customer = this.customerRepository.findById(body.getIdCustomer());
+		if (!customer.isPresent()) {
+			throw new InvalidAttributeException("Customer not found");
 		}
-		order.get().setClient(client.get());
+		order.get().setCustomer(customer.get());
 
-		validation.validateOrder(order.get());
-		OrderEntity orderResponse = this.orderRepository.save(order.get());
-		return mapper.map(orderResponse, OrderUpdateDto.class);
+		validation.validateUpdateOrder(order.get());
+		OrderEntity response = this.orderRepository.save(order.get());
+		return mapper.map(response, OrderUpdateDto.class);
 	}
 
 }

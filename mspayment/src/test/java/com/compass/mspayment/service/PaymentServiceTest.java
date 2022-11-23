@@ -45,7 +45,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    void savePayment_WhenSendSavePaymentValidWithPriceLessThan1000_ExpectedStatusPaymentConfirmed ()  {
+    void save_WhenSendSaveWithTotalOrderLessThan1000_ExpectedStatusOrderEqualsPaymentConfirmed ()  {
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(PaymentFixture.getPaymentEntity());
         paymentService.save(PaymentFixture.getPaymentFormDtoWithAuthorizedPrice());
 
@@ -53,7 +53,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    void savePayment_WhenSendSavePaymentValidWithPriceGreaterThanOrEqualTo1000_ExpectedStatusPaymentUnauthorized ()  {
+    void save_WhenSendSaveWithTotalOrderGreaterThanOrEqualsTo1000_ExpectedStatusOrderEqualsPaymentUnauthorized ()  {
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(PaymentFixture.getPaymentEntity());
         paymentService.save(PaymentFixture.getPaymentFormDtoWithUnauthorizedPrice());
 
@@ -61,16 +61,16 @@ public class PaymentServiceTest {
     }
 
     @Test
-    void findPayment_WhenSendFindPaymentWithIdOrderOrCpfClientValid_ExpectedClient ()  {
-        when(paymentRepository.findByIdOrderAndCpfClient(anyLong(), anyString())).thenReturn(Optional.of(PaymentFixture.getPaymentEntity()));
-        PaymentDto response = paymentService.findByIdOrderAndCpfClient(PaymentFixture.getPaymentEntity().getIdOrder(), PaymentFixture.getPaymentEntity().getCpfClient());
+    void find_WhenSendFindByIdOrderAndCpfCustomerWithExistingIdOrderAndCpfCustomer_ExpectedClient ()  {
+        when(paymentRepository.findByIdOrderAndCpfCustomer(anyLong(), anyString())).thenReturn(Optional.of(PaymentFixture.getPaymentEntity()));
+        PaymentDto response = paymentService.findByIdOrderAndCpfCustomer(PaymentFixture.getPaymentEntity().getIdOrder(), PaymentFixture.getPaymentEntity().getCpfCustomer());
 
         assertNotNull(response);
     }
 
     @Test
-    void findPayment_WhenSendFindPaymentWithIdOrderOrCpfClientInvalid_ExpectedNotFoundAttributeException ()  {
-        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> paymentService.findByIdOrderAndCpfClient(5000L,  "999.999.999-99"));
+    void find_WhenSendFindByIdOrderAndCpfCustomerWithNonExistingIdOrderOrCpfCustomer_ExpectedNotFoundAttributeException ()  {
+        NotFoundAttributeException response = assertThrows(NotFoundAttributeException.class, () -> paymentService.findByIdOrderAndCpfCustomer(5000L,  "999.999.999-99"));
 
         assertNotNull(response);
         assertEquals("Payment not found", response.getMessage());
